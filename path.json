@@ -1,0 +1,7 @@
+{
+    "raw_data": "/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/data_kiel/raw",
+    "interim_data": "/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/data_kiel/interim",
+    "processed_data": "/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/data_kiel/processed",
+    "data_imu_validation": "/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/data_imu_validation",
+    "data_kiel": "/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/data_kiel"
+}

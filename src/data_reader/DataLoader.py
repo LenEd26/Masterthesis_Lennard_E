@@ -3,6 +3,7 @@ import numpy as np
 import json
 import os.path
 import fnmatch
+from scipy.io import loadmat
 
 class DataLoader:
     """
@@ -29,6 +30,43 @@ class DataLoader:
             return
 
         self.data_df = pd.read_csv(os.path.join(self.data_path, file_name))
+        return self.data_df
+
+    def load_kiel_data(self):
+        """load .mat data from kiel dataset
+        """
+        kw_dict = {
+            "LF": "left_foot",
+            "RF": "right_foot"
+        }
+        # find file containing imu data
+        no_file = True
+        for file in os.listdir(self.data_path):
+            if fnmatch.fnmatch(file, "imu*.mat"):
+                file_name = file
+                print(file_name)
+                no_file = False
+        
+        mat_data = loadmat(
+            os.path.join(self.data_path, file_name),
+            simplify_cells=True)["data"]  # dictionary of data
+
+        imu_values = np.concatenate(list(map(mat_data.get, ["acc", "gyro"])), 1)  # get all imu data
+        idx = list(mat_data["imu_location"]).index(kw_dict[self.location_kw])   # get index of the location
+        self.data_df = pd.DataFrame(
+            imu_values[:,:,idx],
+            columns=[
+                "AccX",
+                "AccY",
+                "AccZ",
+                "GyrX",
+                "GyrY",
+                "GyrZ"
+            ])
+
+        # create artificial timestamp based on sampling rate
+        fs = mat_data["fs"]     # get sampling rate
+        self.data_df["timestamp"] = np.arange(0, len(self.data_df) / fs, 1 / fs)    
         return self.data_df
 
     def load_GaitUp_data(self):
