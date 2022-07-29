@@ -16,20 +16,22 @@ if dataset == "data_kiel":
     # kiel dataset
 
     sub_list = [
-        #"pp001",
+        #"pp076",
         #"pp077",
-        "pp106"
+        #"pp107"
         #"pp111",
         #"pp122",
-        #"pp152"
+        #"pp127"
+        #"pp136"
+        "pp152"
     ]
     runs = [
-        # "gait1", 
-        # "gait2",
+        #"gait1", 
+        #"gait2",
         # "walk_slow",
-        # "walk_preferred",
+        "walk_preferred",
         # "walk_fast",
-        "treadmill"
+        # "treadmill"
     ]
 
 raw_base_path = os.path.join("Masterthesis_Lennard_E", dataset, "raw")
@@ -61,7 +63,7 @@ if dataset == "data_RNN":
 #### plot and load raw data ####
 if load_raw:
     from_interim = False
-    data_path = os.path.join(sub_list[0])#, runs[0], "imu")  # folder containing the raw IMU data
+    data_path = os.path.join(sub_list[0], runs[0])#, "imu")  # folder containing the raw IMU data
     read_folder_path = os.path.join(raw_base_path, data_path)
     save_folder_path = os.path.join(interim_base_path, data_path)
 
@@ -87,11 +89,11 @@ if load_raw:
 
             columns_acc = ['AccX', 'AccY', 'AccZ']
             columns_gyr = ['GyrX', 'GyrY', 'GyrZ']
-            save_fig_path = "/dhc/home/lennard.ekrod/Masterarbeit/Masterthesis_Lennard_E/src/visualization"
+            save_fig_path = "/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/src/visualization"
             title = ("raw_acc_xyz_" + sub_list[0] + "_" + loc)
             #columns = df_loc.iloc[:, 2:4]
             #acc = [['AccX', 'AccY', 'AccZ']]
-            df_vis = df_loc.iloc[2100:2300]
+            df_vis = df_loc#.iloc[2100:2300]
 
             plot_acc_gyr(df_vis, columns_acc, title ,save_fig_path)
 

@@ -1,0 +1,67 @@
+import json
+import os
+from src.LFRF_parameters import pipeline_playground 
+
+
+### PARAMS START ###
+control_list = [
+    "pp010",
+    "pp011",
+    "pp028",
+    # "pp071",    # part of the RF data is not usable (IMU dropped from the foot)
+    "pp079",
+    "pp099",
+    "pp105", 
+    "pp106",
+    # "pp114",    # only one constant treadmill speed
+    "pp137",
+    "pp139", 
+    "pp158",
+    "pp165",
+    # "pp166"     # only one constant treadmill speed
+]
+
+stroke_list = [
+    "pp077",
+    "pp101",
+    "pp109",
+    "pp112", 
+    "pp122",
+    "pp123",
+    "pp145",
+    "pp149",
+]
+
+overground_list = [
+        "pp001",
+        "pp002",
+        "pp003",
+        "pp004",
+        "pp005",
+        "pp006",
+        # "pp007",    # l_psis is missing for the optical data
+        "pp008",
+        "pp009",
+        "pp010"
+    ]
+
+runs = [
+    # "treadmill",      # all treadmill data, including changing speed
+    "treadmill_speed1",     # constant speed 1
+    "treadmill_speed2",     # constant speed 2
+    # "gait1",
+    # "gait2",
+    # "walk_fast",
+    # "walk_preferred",
+    # "walk_slow"
+]
+dataset = 'data_kiel'
+with open(os.path.join(os.path.dirname(__file__), '..', 'path.json')) as f:
+    paths = json.loads(f.read())
+data_base_path = paths[dataset]
+## PARAMS END ###
+
+### Execute the Gait Analysis Pipeline ###
+pipeline_playground.execute(control_list, runs, dataset, data_base_path)
+
+
