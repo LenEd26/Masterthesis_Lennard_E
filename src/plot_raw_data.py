@@ -6,10 +6,10 @@ from data_reader.DataLoader import DataLoader
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
-from preprocessing.plot_raw_xyz import plot_acc_gyr
+from src.LFRF_parameters.preprocessing.plot_raw_xyz import plot_acc_gyr
 
 #### PARAMS START ####
-dataset = "data_RNN"
+dataset = "data_kiel"
 load_raw = True   # load (and plot) raw IMU data into interim data
 
 if dataset == "data_kiel":
@@ -19,11 +19,11 @@ if dataset == "data_kiel":
         #"pp076",
         #"pp077",
         #"pp107"
-        #"pp111",
+        "pp111",
         #"pp122",
         #"pp127"
         #"pp136"
-        "pp152"
+        #"pp152"
     ]
     runs = [
         #"gait1", 
@@ -53,7 +53,7 @@ if dataset == "data_RNN":
     #     # "gait1", 
     #     # "gait2",
     #     # "walk_slow",
-    #     # "walk_preferred",
+    #     "walk_preferred",
     #     # "walk_fast",
     #     "treadmill"
     # ]

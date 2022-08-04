@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from scipy.spatial.transform import Rotation as rot
-from src.event_detection.imu_event_detection import gyro_threshold_stance
+from src.LFRF_parameters.event_detection.imu_event_detection import gyro_threshold_stance
 import matplotlib.pyplot as plt
 
 def gyro_to_euler(orientation, gyro):

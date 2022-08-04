@@ -37,7 +37,7 @@ class Evaluator:
             "stance_time": "s",
         }
 
-    def add_data(self, subject_num, run_num, data, reference_data):
+    def add_data(self, subject_num, run_num, data): #, reference_data
         """
         Adds a new pair of IMU and reference data for one trial.
 
@@ -52,7 +52,7 @@ class Evaluator:
         """
         self.data[(subject_num, run_num)] = {
             "data": data,
-            "reference_data": reference_data,
+            #"reference_data": reference_data,
             "merged": {},
         }
 
@@ -399,9 +399,7 @@ class Evaluator:
         # mpld3.show() 
 
         #### show and/or save plots ####
-        #plt.axis("square")
         plt.show()
-        # plt.savefig(title)
         # plt.close()
 
     def plot_bland_altmann(self, column, subject_run_nums, reference_name):

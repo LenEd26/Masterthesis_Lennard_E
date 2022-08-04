@@ -446,3 +446,104 @@ def hundza_gait_events(imu):
         stance[to:stance_begin] = False
 
     return TOFS, IOFS, TO, stance
+
+
+def laidig_gait_events(imu, stance_magnitude_threshold, stance_count_threshold, show_figs, save_fig_directory):
+    """
+    gait event detection by Laidig et al. (https://doi.org/10.3389/fdgth.2021.736418)
+    """
+
+    stance = gyro_threshold_stance(
+        imu,
+        stance_magnitude_threshold=stance_magnitude_threshold,
+        stance_count_threshold=stance_count_threshold,
+    )
+    # step_begins = np.where(np.logical_and(np.logical_not(stance[:-1]), stance[1:]))[0]  
+    stance_ends = np.where(np.logical_and(np.logical_not(stance[1:]), stance[:-1]))[0]  # find all ends of stance phase
+
+    gyro = imu.gyro()
+    acc = imu.accel()
+    t = imu.time()
+
+    # select axis with highest standard deviation for gyro signal
+    G = np.transpose(gyro)[np.argmax(gyro.std(axis=0))]
+
+    # fig, ax = plt.subplots(figsize=(20, 5))
+    # plt.plot(range(len(G)), G, label="gyro_axis")
+    # plt.vlines(x=stance_ends, ymin=-10, ymax=9, label='stance_end')
+    # plt.show()
+
+    FO_samples = np.array([], dtype=int)
+    IC_samples = np.array([], dtype=int)
+    fo_search_begins = np.array([], dtype=int)
+    fo_search_ends = np.array([], dtype=int)
+    gyro_maxes = np.array([], dtype=int)
+
+    for step_begin, step_end in zip(stance_ends[:-1], stance_ends[1:]):
+        current_gyro = G[step_begin:step_end]  # get current stride
+        current_gyro = current_gyro * np.sign(sum(current_gyro[0:int(len(current_gyro)/4)]))  # check sensor orientation.
+                                                                                              # first 1/4 of the signal should be positive
+        
+        # detect FO events using zero-crossing
+        initial_gyro = current_gyro[0:int(len(current_gyro)/3)]  # get the first 1/3 of the gyro signal
+        gyro_max_idx = np.argmax(initial_gyro) 
+        half_max = np.max(initial_gyro)/2  # get half max value in the initial gyro signal
+        fo_search_begin = np.argmax(current_gyro > half_max)  # get index of the half max: start of zero crossing search region
+        fo_search_end = np.argmin(current_gyro)
+        try:
+            FO_local = np.argmax(current_gyro[fo_search_begin:fo_search_end] < 0) + fo_search_begin  # local index of FO event
+            FO_samples = np.append(FO_samples, FO_local + step_begin)
+            fo_search_begins = np.append(fo_search_begins, fo_search_begin + step_begin)
+            fo_search_ends = np.append(fo_search_ends, fo_search_end + step_begin)
+            gyro_maxes = np.append(gyro_maxes, gyro_max_idx + step_begin)
+
+            # fig, ax = plt.subplots(figsize=(20, 5))
+            # plt.plot(range(len(current_gyro)), current_gyro, label="current_gyro")
+            # plt.plot(fo_search_begin, current_gyro[fo_search_begin],
+            #             marker='x', linestyle='None', label="half_max")
+            # plt.plot(FO_local, current_gyro[FO_local],
+            #             marker='x', linestyle='None', label="FO")
+            # plt.xlabel('Samples')
+            # plt.legend()
+            # plt.show()
+
+            # detect IC events using jerk from acceleraion
+            # calculate jerk norm for initial contact detection
+            jerk_norm = np.linalg.norm(np.gradient(acc, axis=0), axis=1)
+            current_jerk = jerk_norm[(step_begin + FO_local):step_end]  # current search region starts with FO event
+
+            jerk_threshold = 0.95
+            jerk_max = np.max(current_jerk)
+            IC_local = np.argmax(current_jerk > jerk_threshold * jerk_max)
+            IC_samples = np.append(IC_samples, step_begin + FO_local + IC_local)
+        except ValueError:  # if FO cannot be detected, skip this gait cycle
+            pass
+
+    IC_times = [t[sample] if not np.isnan(sample) else np.nan for sample in IC_samples]
+    FO_times = [t[sample] if not np.isnan(sample) else np.nan for sample in FO_samples]
+
+    if show_figs != 0:
+        fig, ax = plt.subplots(figsize=(20, 5))
+        plt.plot(range(len(G)), G, label="gyro")
+        plt.plot(range(len(jerk_norm)), jerk_norm, label="jerk")
+        plt.vlines(x=fo_search_begins, ymin=-10, ymax=9, 
+                   color="darkturquoise", label='fo_search_begin')
+        plt.vlines(x=fo_search_ends, ymin=-10, ymax=9, 
+                   color="yellow", label='fo_search_end')
+        plt.plot(gyro_maxes, np.array(G)[gyro_maxes],
+                    marker='x', linestyle='None', label="gyro_max")
+        plt.plot(FO_samples, np.array(G)[FO_samples],
+                    marker='x', linestyle='None', label="FO_py")
+        plt.plot(IC_samples, np.array(jerk_norm)[IC_samples],
+                    marker='x', linestyle='None', label="IC_py")
+        plt.xlabel('Samples')
+        plt.legend()
+        if show_figs == 1:
+            plt.show()
+        elif show_figs == 2:
+            plt.savefig(save_fig_directory + '_gait_events.png',
+                        bbox_inches='tight')
+            plt.close(fig)
+
+
+    return IC_samples, FO_samples, IC_times, FO_times, stance

@@ -281,7 +281,7 @@ class GaitParameters:
                 # segment strides
                 z = np.array(self.trajectories[side]["position_z"])[swing_start:swing_end]
                 # look for maximum foot clearance
-                peak_idx, _ = find_peaks(z, prominence=0.02)
+                peak_idx, _ = find_peaks(z, prominence=0.001)
                 peak_values = z[peak_idx]
 
                 if not (np.isnan(peak_idx).any() or peak_idx.size == 0):

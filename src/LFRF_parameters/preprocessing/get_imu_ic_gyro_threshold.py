@@ -28,9 +28,9 @@ Exports a CSV file with the thresholds.
 import os
 import sys
 
-from data.imu import IMU
+from src.data_reader.imu import IMU
 from src.LFRF_parameters.event_detection.imu_event_detection import gyro_threshold_stance
-from visualization.plot import plot_gyro_magnitude, show
+from src.visualization.plot import plot_gyro_magnitude, show
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sp

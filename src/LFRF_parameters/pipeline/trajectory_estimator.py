@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import os
 
-from .abstract_pipeline_components import AbstractTrajectoryEstimator
+from src.LFRF_parameters.pipeline.abstract_pipeline_components import AbstractTrajectoryEstimator
 from src.LFRF_parameters.trajectory_estimation.filter import error_state_kalman_filter
 
 
@@ -116,6 +116,9 @@ class TuncaTrajectoryEstimator(AbstractTrajectoryEstimator):
                           trajectories[foot[0]]["position_y"],  #[100:2000],
                           trajectories[foot[0]]["position_z"],  #[100:2000],
                           label=foot[1])
+            ax.set_xlabel("x")
+            ax.set_ylabel("y")
+            ax.set_zlabel("z")
             plt.legend()
             if show_figs == 1:
                 plt.show()

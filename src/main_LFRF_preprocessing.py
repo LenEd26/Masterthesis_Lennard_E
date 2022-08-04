@@ -4,8 +4,8 @@ import pandas as pd
 import matplotlib
 # matplotlib.use("WebAgg")
 import matplotlib.pyplot as plt
-from preprocessing.plot_raw_xyz import plot_acc_gyr
-from preprocessing.get_imu_gyro_thresholds import AccPlot, GyroPlot
+from src.LFRF_parameters.preprocessing.plot_raw_xyz import plot_acc_gyr
+from src.LFRF_parameters.preprocessing.get_imu_gyro_thresholds import AccPlot, GyroPlot
 from data_reader.DataLoader import DataLoader
 
 #### PARAMS START ####
@@ -19,21 +19,21 @@ if dataset == "data_kiel":
     sub_list = [
         # "pp001",
         # "pp077",
-        # "pp111",
-        # "pp122",
+        "pp111",
+        #"pp122",
         # "pp152"
-        "pp105",
-        "pp112",
-        "pp114",
-        "pp139"
+        # "pp105",
+        # "pp112",
+        # "pp114",
+        # "pp139"
     ]
     runs = [
         # "gait1", 
         # "gait2",
         # "walk_slow",
-        # "walk_preferred",
+        "walk_preferred",
         # "walk_fast",
-        "treadmill"
+        #"treadmill"
     ]
 
 elif dataset == "data_kiel_val":

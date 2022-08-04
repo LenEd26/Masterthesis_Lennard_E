@@ -210,29 +210,29 @@ class Pipeline:
 
         return summary
 
-    def load_reference_data(self, subject_num, run_num):
-        """Load reference data with the specified reference loader.
-        Note: subject and run need to be identified since the reference loader uses caching.
+    # def load_reference_data(self, subject_num, run_num):
+    #     """Load reference data with the specified reference loader.
+    #     Note: subject and run need to be identified since the reference loader uses caching.
 
-        Args:
-            subject_num (int): subject index
-            run_num (int): run index
+    #     Args:
+    #         subject_num (int): subject index
+    #         run_num (int): run index
 
-        Returns:
-            dict[str, DataFrame]: DataFrames with gait parameters for the left and right foot
-        """
+    #     Returns:
+    #         dict[str, DataFrame]: DataFrames with gait parameters for the left and right foot
+    #     """
 
-        return self.config["reference_loader"](
-            self.config["name"],
-            self.config["raw_base_path"],
-            self.config["interim_base_path"],
-            self.config["dataset"],
-            self.config["subjects"][subject_num],
-            self.config["runs"][run_num],
-            self.config["overwrite"],
-        ).get_data()
+    #     return self.config["reference_loader"](
+    #         self.config["name"],
+    #         self.config["raw_base_path"],
+    #         self.config["interim_base_path"],
+    #         self.config["dataset"],
+    #         self.config["subjects"][subject_num],
+    #         self.config["runs"][run_num],
+    #         self.config["overwrite"],
+    #     ).get_data()
 
-    def add_to_evaluator(self, subject_num, run_num, reference_data, gait_parameters):
+    def add_to_evaluator(self, subject_num, run_num, gait_parameters):  #, reference_data
         """Add estimated gait parameters and reference data for one subject and run to the evaluator.
 
         Args:
@@ -245,7 +245,7 @@ class Pipeline:
             None
         """
 
-        self.evaluator.add_data(subject_num, run_num, gait_parameters, reference_data)
+        self.evaluator.add_data(subject_num, run_num, gait_parameters) #, reference_data)
 
     def execute(self, subject_runs):
         """
@@ -310,36 +310,34 @@ class Pipeline:
                 subject_num, run_num, gait_events, trajectories, save_fig_dir, imu_ic
             )  # , imu_ic
 
-            # insert excel saving
-
             #print('calculate aggregate_parameters')
             #aggregate_params, _ = aggregate_parameters(aggregate_params_dir, save=True)
 
-            print("load reference data")
-            reference_data = self.load_reference_data(subject_num, run_num)
+            # print("load reference data")
+            # reference_data = self.load_reference_data(subject_num, run_num)
 
-            self.add_to_evaluator(subject_num, run_num, reference_data, gait_parameters)
+            self.add_to_evaluator(subject_num, run_num, gait_parameters) #, reference_data
             print()
 
         # match reference system and estimated gait parameters stride by stride
-        self.evaluator.match_timestamps()
+        # self.evaluator.match_timestamps()
 
         # generate plots
         # self.evaluator.plot_correlation(
         #     "Tunca et al.", "stride_length", subject_runs, self.config["reference_name"]
         # )
-        self.evaluator.plot_correlation(
-            "Tunca et al.", "clearance", subject_runs, self.config["reference_name"]
-        )
+        # self.evaluator.plot_correlation(
+        #     "Tunca et al.", "clearance", subject_runs, self.config["reference_name"]
+        # )
         # self.evaluator.plot_correlation(
         #     "Tunca et al.", "stride_time", subject_runs, self.config["reference_name"]
         # )
         # self.evaluator.plot_bland_altmann(
         #     "stride_length", subject_runs, self.config["reference_name"]
         # )
-        self.evaluator.plot_bland_altmann(
-            "clearance", subject_runs, self.config["reference_name"]
-        )
+        # self.evaluator.plot_bland_altmann(
+        #     "clearance", subject_runs, self.config["reference_name"]
+        # )
         # self.evaluator.plot_bland_altmann(
         #     "stride_time", subject_runs, self.config["reference_name"]
         # )

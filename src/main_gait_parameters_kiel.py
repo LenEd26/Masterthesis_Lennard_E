@@ -22,37 +22,37 @@ control_list = [
 ]
 
 stroke_list = [
-    "pp077",
-    "pp101",
-    "pp109",
-    "pp112", 
-    "pp122",
-    "pp123",
-    "pp145",
-    "pp149",
+    ##"pp077",
+    # "pp105", #?? why no timestamps etc.
+    # "pp107",
+    "pp111",
+    ##"pp122",
+    # "pp127",
+    # "pp136",
+    "pp152"
 ]
 
 overground_list = [
         "pp001",
-        "pp002",
-        "pp003",
-        "pp004",
-        "pp005",
-        "pp006",
-        # "pp007",    # l_psis is missing for the optical data
-        "pp008",
-        "pp009",
-        "pp010"
+        # "pp002",
+        # "pp003",
+        # "pp004",
+        # "pp005",
+        # "pp006",
+        # # "pp007",    # l_psis is missing for the optical data
+        # "pp008",
+        # "pp009",
+        # "pp010"
     ]
 
 runs = [
-    # "treadmill",      # all treadmill data, including changing speed
-    "treadmill_speed1",     # constant speed 1
-    "treadmill_speed2",     # constant speed 2
+    #"treadmill"      # all treadmill data, including changing speed
+    # "treadmill_speed1",     # constant speed 1
+    # "treadmill_speed2",     # constant speed 2
     # "gait1",
     # "gait2",
     # "walk_fast",
-    # "walk_preferred",
+    "walk_preferred",
     # "walk_slow"
 ]
 dataset = 'data_kiel'
@@ -62,6 +62,6 @@ data_base_path = paths[dataset]
 ## PARAMS END ###
 
 ### Execute the Gait Analysis Pipeline ###
-pipeline_playground.execute(control_list, runs, dataset, data_base_path)
+pipeline_playground.execute(stroke_list, runs, dataset, data_base_path)
 
 
