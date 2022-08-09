@@ -41,6 +41,32 @@ def execute(sub_list, runs, dataset, data_base_path):
                             'runs': runs,
                             'subjects': sub_list,
         }
+
+    elif dataset == "data_sim":
+        pipeline_config = {
+                            # @name: the name should be unique for each pipeline configuration.
+                            # it is used to identify interim data and reuse it in the next run
+                            "name": "data_sim",
+                            'raw_base_path': os.path.join(data_base_path, "raw"),
+                            'interim_base_path': os.path.join(data_base_path, "interim"),
+                            'processed_base_path': os.path.join(data_base_path, "processed"),
+                            'overwrite': False,  # overwrite the trajectory estimations
+                            'show_figures': 0,  # show figures from intermediate steps. 2: figures are saved; 1: figures are shown; 0: no figures plotted
+                            'location_kws': ['LF', 'RF'],
+                            'data_loader': PhysilogDataLoader,
+                            'trajectory_estimator': TuncaTrajectoryEstimator,
+                            'sampling_rate': 120, #?
+                            'gait_event_detector': TuncaEventDetector,
+                            'prominence_search_threshold': 0.7,
+                            'prominence_ic': 0.01,
+                            'prominence_fo': 0.01,
+                            "reference_loader": OptogaitReferenceLoader,
+                            "reference_name": "OptoGait", ##?
+                            'dataset': dataset,
+                            'runs': runs,
+                            'subjects': sub_list,
+        }
+
     elif dataset == "data_imu_validation":
         pipeline_config = {
                             # @name: the name should be unique for each pipeline configuration.

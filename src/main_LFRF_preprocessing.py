@@ -2,14 +2,14 @@ import json
 import os
 import pandas as pd
 import matplotlib
-# matplotlib.use("WebAgg")
+matplotlib.use("WebAgg")
 import matplotlib.pyplot as plt
 from src.LFRF_parameters.preprocessing.plot_raw_xyz import plot_acc_gyr
 from src.LFRF_parameters.preprocessing.get_imu_gyro_thresholds import AccPlot, GyroPlot
 from data_reader.DataLoader import DataLoader
 
 #### PARAMS START ####
-dataset = "data_kiel"
+dataset = "data_sim"
 load_raw = True   # load (and plot) raw IMU data into interim data
 get_stance_threshold = False   # determine stance threshold
 get_initial_contact = False    # determine IMU initial contact
@@ -18,9 +18,9 @@ if dataset == "data_kiel":
     # kiel dataset
     sub_list = [
         # "pp001",
-        # "pp077",
-        "pp111",
-        #"pp122",
+        "pp077",
+        #"pp111",
+        "pp122",
         # "pp152"
         # "pp105",
         # "pp112",
@@ -28,12 +28,12 @@ if dataset == "data_kiel":
         # "pp139"
     ]
     runs = [
-        # "gait1", 
+        #"gait1", 
         # "gait2",
         # "walk_slow",
-        "walk_preferred",
+        #"walk_preferred",
         # "walk_fast",
-        #"treadmill"
+        "treadmill"
     ]
 
 elif dataset == "data_kiel_val":
@@ -70,6 +70,22 @@ elif dataset == "data_imu_validation":
         "fast"
     ]
 
+elif dataset == "data_sim":
+    # Simulated dataset
+    sub_list = [
+        "S1",
+        "S2"
+         ]
+
+    runs = [
+        "1P", 
+        "2P",
+        "3P",
+        "regular"   
+    ]
+
+
+
 with open(os.path.join(os.path.dirname(__file__), '..', 'path.json')) as f:
     paths = json.loads(f.read())
 raw_base_path = os.path.join(paths[dataset], "raw")
@@ -82,7 +98,7 @@ if load_raw:
     for i in range(len(sub_list)):
         for j in range(len(runs)):
             from_interim = False
-            data_path = os.path.join(sub_list[i], runs[j], "imu")  # folder containing the raw IMU data
+            data_path = os.path.join(sub_list[i], runs[j])#, "imu")  # folder containing the raw IMU data
             read_folder_path = os.path.join(raw_base_path, data_path)
             save_folder_path = os.path.join(interim_base_path, data_path)
 
@@ -92,9 +108,9 @@ if load_raw:
                 if from_interim:  # load interim data
                     df_loc = pd.read_csv(os.path.join(read_folder_path, loc + ".csv"))
                 else:  # load raw data (& save file to the interim folder)
-                    data_loader = DataLoader(read_folder_path, loc)
-                    df_loc = data_loader.load_kiel_data()
-                    # df_loc = data_loader.load_xsens_data()
+                    data_loader = DataLoader(read_folder_path, loc)#, sub_list, runs)
+                    #df_loc = data_loader.load_kiel_data()
+                    df_loc = data_loader.load_xsens_data()
                     # df_loc = data_loader.load_GaitUp_data()
                     # df_loc = data_loader.cut_data(500, 10500)  # (if necessary: segment data)
                     data_loader.save_data(save_folder_path)  # save re-formatted data into /interim folder

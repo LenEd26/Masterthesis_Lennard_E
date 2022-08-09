@@ -7,8 +7,11 @@ from sklearn.svm import SVC
 
 # Step2 Load dataset
 
+
 # Step3 Split data in training and testing subsets
+X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.8, random_state = 0)
 
 # Step4 Classifier Training using SVM
+
 
 # Step5 CHeck classifier accuracy on test data and see results

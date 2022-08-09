@@ -9,10 +9,12 @@ class DataLoader:
     """
     load raw IMU data & save as .csv file
     """
-    def __init__(self, data_path, location_kw):
+    def __init__(self, data_path, location_kw): #, sub_list, runs):
         self.data_path = data_path
         self.location_kw = location_kw
         self.data_df = None
+        #self.sub_list = sub_list
+        #self.score = runs
 
     def load_csv_data(self):
         """load .csv data that are already formatted
@@ -116,7 +118,7 @@ class DataLoader:
             return
 
         # extract data columns
-        raw_data_df = pd.read_csv(os.path.join(self.data_path, file_name), skiprows=1, low_memory=False)
+        raw_data_df = pd.read_csv(os.path.join(self.data_path, file_name), skiprows=7, low_memory=False)#, on_bad_lines='skip')#
         self.data_df = raw_data_df.filter(['SampleTimeFine', 'Gyr_X', 'Gyr_Y', 'Gyr_Z', 'Acc_X', 'Acc_Y', 'Acc_Z'], axis=1)
         self.data_df = self.data_df.rename(columns={'SampleTimeFine': 'timestamp',
                                 'Acc_X': 'AccY',
@@ -133,6 +135,8 @@ class DataLoader:
         self.data_df['AccX'] = self.data_df['AccX'] / 9.8 * (-1)
         self.data_df['AccY'] = self.data_df['AccY'] / 9.8
         self.data_df['AccZ'] = self.data_df['AccZ'] / 9.8
+        #self.data_df["ID"] =  self.data_df[self.sub_list[0]]
+        #self.data_df["Score"] =  self.data_df[self.score[0]]
         return self.data_df        
 
     def load_EXLs3_data(self):
