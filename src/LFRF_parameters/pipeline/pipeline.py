@@ -31,23 +31,23 @@ class Pipeline:
         self.config = pipeline_config
         self.imu_ic = None
         self.imu_gyro_threshold = None
-        self.evaluator = Evaluator()
+        #self.evaluator = Evaluator()
         
-        # # load initial contacts from csv file
-        # self.imu_ic_timestamps = pd.read_csv(
-        #     os.path.join(
-        #         self.config["interim_base_path"],
-        #         "imu_initial_contact_manual.csv",
-        #     )
-        # )
+        #load initial contacts from csv file
+        self.imu_ic_timestamps = pd.read_csv(
+            os.path.join(
+                self.config["interim_base_path"],
+                "imu_initial_contact_manual.csv",
+            )
+        )
 
-        # load gyro thresholds from csv file
-        # self.imu_gyro_thresholds = pd.read_csv(
-        #     os.path.join(
-        #         self.config["interim_base_path"],
-        #         "stance_magnitude_thresholds_manual.csv",
-        #     )
-        # )
+        #load gyro thresholds from csv file
+        self.imu_gyro_thresholds = pd.read_csv(
+            os.path.join(
+                self.config["interim_base_path"],
+                "stance_magnitude_thresholds_manual.csv",
+            )
+        )
 
     def load_data(self, subject_num, run_num):
         """
@@ -85,18 +85,18 @@ class Pipeline:
         #     self.config["runs"][run_num],
         # ).get_data()
 
-        # imu_ic = float(
-        #     self.imu_ic_timestamps[
-        #         np.logical_and(
-        #             self.imu_ic_timestamps["subject"]
-        #             == self.config["subjects"][subject_num],
-        #             self.imu_ic_timestamps["run"] == self.config["runs"][run_num],
-        #         )
-        #     ]["imu_initial_contact_right"]   # ic_time
-        # )
+        imu_ic = float(
+            self.imu_ic_timestamps[
+                np.logical_and(
+                    self.imu_ic_timestamps["subject"]
+                    == self.config["subjects"][subject_num],
+                    self.imu_ic_timestamps["run"] == self.config["runs"][run_num],
+                )
+            ]["imu_initial_contact_right"]   # ic_time
+        )
 
-        # # crop imu data to fit experiment_duration seconds from inititial contact
-        # # start 2 seconds earlyer to get also lift-off data before initial contact
+        # crop imu data to fit experiment_duration seconds from inititial contact
+        # start 2 seconds earlyer to get also lift-off data before initial contact
         # for imu in imus.values():
         #     imu.crop(
         #         imu_ic - 2,
@@ -104,22 +104,22 @@ class Pipeline:
         #         inplace=True,
         #     )
 
-        # self.stance_thresholds = self.imu_gyro_thresholds[
-        #     np.logical_and(
-        #         self.imu_gyro_thresholds["subject"]
-        #         == self.config["subjects"][subject_num],
-        #         self.imu_gyro_thresholds["run"] == self.config["runs"][run_num],
-        #     )
-        # ][
-        #     [
-        #         "stance_magnitude_threshold_left",
-        #         "stance_magnitude_threshold_right",
-        #         "stance_count_threshold_left",
-        #         "stance_count_threshold_right",
-        #     ]
-        # ]
+        self.stance_thresholds = self.imu_gyro_thresholds[
+            np.logical_and(
+                self.imu_gyro_thresholds["subject"]
+                == self.config["subjects"][subject_num],
+                self.imu_gyro_thresholds["run"] == self.config["runs"][run_num],
+            )
+        ][
+            [
+                "stance_magnitude_threshold_left",
+                "stance_magnitude_threshold_right",
+                "stance_count_threshold_left",
+                "stance_count_threshold_right",
+            ]
+        ]
 
-        # return imus, imu_ic
+        return imus, imu_ic
 
     def detect_gait_events(self, subject_num, run_num, imus, trajectories, save_fig_directory):
         """Perform gait event detection with the gait event detector specified in the config.
@@ -172,8 +172,8 @@ class Pipeline:
             save_fig_directory
         )
 
-    def calculate_gait_parameters(self, subject_num, run_num, gait_events, trajectories, save_fig_directory,
-                                  save=True, imu_ic=0):
+    def calculate_gait_parameters(self, subject_num, run_num, gait_events, trajectories, save_fig_directory, 
+    save = True, imu_ic=0):
         """Calculate gait parameters.
 
         Args:
@@ -202,8 +202,8 @@ class Pipeline:
 
             summary["left"].to_csv(os.path.join(save_path, "left_foot_core_params_py_n.csv"), index=False)
             summary["right"].to_csv(os.path.join(save_path, "right_foot_core_params_py_n.csv"), index=False)
-            # aggregate["left"].to_csv(os.path.join(save_path, "left_foot_aggregate_params_py_n.csv"), index=False)
-            # aggregate["right"].to_csv(os.path.join(save_path, "right_foot_aggregate_params_py_n.csv"), index=False)
+            #aggregate["left"].to_csv(os.path.join(save_path, "left_foot_aggregate_params_py_n.csv"), index=False)
+            #aggregate["right"].to_csv(os.path.join(save_path, "right_foot_aggregate_params_py_n.csv"), index=False)
             print("saved gait parameters for " +
                   self.config["runs"][run_num] + ", " +
                   self.config["subjects"][subject_num])
@@ -245,7 +245,7 @@ class Pipeline:
     #         None
     #     """
 
-        # self.evaluator.add_data(subject_num, run_num, gait_parameters) #, reference_data)
+    #     self.evaluator.add_data(subject_num, run_num, gait_parameters) #, reference_data)
 
     def execute(self, subject_runs):
         """
@@ -308,7 +308,8 @@ class Pipeline:
             print("calculate gait parameters")
             gait_parameters = self.calculate_gait_parameters(
                 subject_num, run_num, gait_events, trajectories, save_fig_dir, imu_ic
-            )  # , imu_ic
+            )
+            print(gait_parameters)
 
             #print('calculate aggregate_parameters')
             #aggregate_params, _ = aggregate_parameters(aggregate_params_dir, save=True)
@@ -316,8 +317,8 @@ class Pipeline:
             # print("load reference data")
             # reference_data = self.load_reference_data(subject_num, run_num)
 
-            self.add_to_evaluator(subject_num, run_num, gait_parameters) #, reference_data
-            print()
+            #self.add_to_evaluator(subject_num, run_num, gait_parameters) #, reference_data
+            #print()
 
         # match reference system and estimated gait parameters stride by stride
         # self.evaluator.match_timestamps()

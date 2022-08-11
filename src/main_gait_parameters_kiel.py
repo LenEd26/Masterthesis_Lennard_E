@@ -22,28 +22,16 @@ control_list = [
 ]
 
 stroke_list = [
-    "pp077",
-    # "pp105", #?? why no timestamps etc.
+    #"pp077",
+    "pp105", #?? why no timestamps etc.
     # "pp107",
     #"pp111",
-    ##"pp122",
+    #"pp122",
     # "pp127",
     # "pp136",
     #"pp152"
 ]
 
-overground_list = [
-        "pp001",
-        # "pp002",
-        # "pp003",
-        # "pp004",
-        # "pp005",
-        # "pp006",
-        # # "pp007",    # l_psis is missing for the optical data
-        # "pp008",
-        # "pp009",
-        # "pp010"
-    ]
 
 runs = [
     "treadmill"      # all treadmill data, including changing speed
