@@ -52,4 +52,4 @@ data_base_path = paths[dataset]
 ### Execute the Gait Analysis Pipeline ###
 pipeline_playground.execute(stroke_list, runs, dataset, data_base_path)
 
-
+## aggregation of datasets

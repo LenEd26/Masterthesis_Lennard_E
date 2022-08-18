@@ -191,22 +191,22 @@ class Pipeline:
                                  save_fig_directory,
                                  imu_ic).summary()
 
-        if save:
-            save_path = os.path.join(
+        # if save:
+        save_path = os.path.join(
                 self.config["processed_base_path"],
                 self.config["subjects"][subject_num],
                 self.config["runs"][run_num]
             )
-            if not os.path.exists(save_path):
-                os.makedirs(save_path)
+        #     if not os.path.exists(save_path):
+        #         os.makedirs(save_path)
 
-            summary["left"].to_csv(os.path.join(save_path, "left_foot_core_params_py_n.csv"), index=False)
-            summary["right"].to_csv(os.path.join(save_path, "right_foot_core_params_py_n.csv"), index=False)
+        summary["left"].to_csv(os.path.join(save_path, "left_foot_core_params_py_n.csv"), index=False)
+        summary["right"].to_csv(os.path.join(save_path, "right_foot_core_params_py_n.csv"), index=False)
             #aggregate["left"].to_csv(os.path.join(save_path, "left_foot_aggregate_params_py_n.csv"), index=False)
             #aggregate["right"].to_csv(os.path.join(save_path, "right_foot_aggregate_params_py_n.csv"), index=False)
-            print("saved gait parameters for " +
-                  self.config["runs"][run_num] + ", " +
-                  self.config["subjects"][subject_num])
+        print("saved gait parameters for " +
+            self.config["runs"][run_num] + ", " +
+            self.config["subjects"][subject_num])
 
         return summary
 
@@ -310,6 +310,7 @@ class Pipeline:
                 subject_num, run_num, gait_events, trajectories, save_fig_dir, imu_ic
             )
             print(gait_parameters)
+
 
             #print('calculate aggregate_parameters')
             #aggregate_params, _ = aggregate_parameters(aggregate_params_dir, save=True)

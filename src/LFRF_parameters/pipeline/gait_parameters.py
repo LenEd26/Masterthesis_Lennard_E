@@ -351,7 +351,6 @@ class GaitParameters:
 
         return clearance
 
-
     def clearance(self, min_max):
         """
         Minimum foot clearance (MFC) or average maximum clearance
