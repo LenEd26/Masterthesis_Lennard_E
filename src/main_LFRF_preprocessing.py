@@ -10,9 +10,9 @@ from data_reader.DataLoader import DataLoader
 
 #### PARAMS START ####
 dataset = "data_sim"
-load_raw = True   # load (and plot) raw IMU data into interim data
-get_stance_threshold = False   # determine stance threshold
-get_initial_contact = False    # determine IMU initial contact
+load_raw = False   # load (and plot) raw IMU data into interim data
+get_stance_threshold = False  # determine stance threshold
+get_initial_contact = True   # determine IMU initial contact
 
 if dataset == "data_kiel":
     # kiel dataset
@@ -98,7 +98,7 @@ if load_raw:
     for i in range(len(sub_list)):
         for j in range(len(runs)):
             from_interim = False
-            data_path = os.path.join(sub_list[i], runs[j])#, "imu")  # folder containing the raw IMU data
+            data_path = os.path.join(sub_list[i], runs[j], "imu")  # folder containing the raw IMU data
             read_folder_path = os.path.join(raw_base_path, data_path)
             save_folder_path = os.path.join(interim_base_path, data_path)
 
@@ -108,7 +108,7 @@ if load_raw:
                 if from_interim:  # load interim data
                     df_loc = pd.read_csv(os.path.join(read_folder_path, loc + ".csv"))
                 else:  # load raw data (& save file to the interim folder)
-                    data_loader = DataLoader(read_folder_path, loc)#, sub_list, runs)
+                    data_loader = DataLoader(read_folder_path, loc, sub_list, runs)
                     #df_loc = data_loader.load_kiel_data()
                     df_loc = data_loader.load_xsens_data()
                     # df_loc = data_loader.load_GaitUp_data()
@@ -144,6 +144,7 @@ if get_stance_threshold:
 
     for subject_id, subject in enumerate(sub_list):
         subject_directory = os.path.join(interim_base_path, subject)
+        
         runs = [
             x
             for x in os.listdir(subject_directory)
@@ -162,6 +163,10 @@ if get_stance_threshold:
                 len(runs)
             )
             file_directory = os.path.join(subject_directory, run, "imu")
+            print("file directory is" + file_directory)
+            print("interimbp_" + interim_base_path)
+            print("subject" + subject)
+            print(run)
 
             # run interactive gyro stance phase detection
             gp = GyroPlot(file_directory, interim_base_path, subject, run)

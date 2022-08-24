@@ -1,0 +1,10 @@
+subject,run,stance_magnitude_threshold_left,stance_magnitude_threshold_right,stance_count_threshold_left,stance_count_threshold_right
+
+S1,1P,0.4,0.5,13,13
+S1,2P,0.4,0.5,11,10
+S1,regular,0.5,0.6,11,11
+S1,3P,0.5,0.5,13,9
+S2,3P,0.5,0.4,12,10
+S2,2P,0.7,0.6,10,8
+S2,1P,0.7,0.6,8,8
+S2,regular,0.6,0.7,7,7
