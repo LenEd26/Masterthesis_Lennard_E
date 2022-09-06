@@ -10,7 +10,7 @@ from src.data_reader.imu import IMU
 from src.LFRF_parameters.pipeline.gait_parameters import GaitParameters
 from src.LFRF_parameters.pipeline.evaluator import Evaluator
 # from features.aggregate_gait_parameters import aggregate_parameters
-from src.visualization.plot import plot_multi_3d_view, show, plot_accel_gyro
+from src.visualisation.plot import plot_multi_3d_view, show, plot_accel_gyro
 
 
 class Pipeline:

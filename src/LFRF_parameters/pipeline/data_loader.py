@@ -2,7 +2,7 @@ import fnmatch
 import os
 import pandas as pd
 from src.LFRF_parameters.pipeline.abstract_pipeline_components import AbstractDataLoader
-from src.visualization.plot import *
+from src.visualisation.plot import *
 import matplotlib.pyplot as plt
 
 class PhysilogDataLoader(AbstractDataLoader):

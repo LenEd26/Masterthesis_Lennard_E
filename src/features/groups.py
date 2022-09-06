@@ -4,7 +4,7 @@ import pandas as pd
 import warnings
 
 from data.imu import IMU
-import visualization.plot as plot
+import visualisation.plot as plot
 
 """
 This script is cutting the six minute processed and the signal data into 3 groups of 2 minutes each and creates plots 

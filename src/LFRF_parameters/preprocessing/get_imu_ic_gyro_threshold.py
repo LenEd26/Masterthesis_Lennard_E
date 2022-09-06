@@ -30,7 +30,7 @@ import sys
 
 from src.data_reader.imu import IMU
 from src.LFRF_parameters.event_detection.imu_event_detection import gyro_threshold_stance
-from src.visualization.plot import plot_gyro_magnitude, show
+from src.visualisation.plot import plot_gyro_magnitude, show
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sp
