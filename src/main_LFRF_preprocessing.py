@@ -2,17 +2,17 @@ import json
 import os
 import pandas as pd
 import matplotlib
-matplotlib.use("WebAgg")
+#matplotlib.use("WebAgg")
 import matplotlib.pyplot as plt
 from src.LFRF_parameters.preprocessing.plot_raw_xyz import plot_acc_gyr
 from src.LFRF_parameters.preprocessing.get_imu_gyro_thresholds import AccPlot, GyroPlot
 from data_reader.DataLoader import DataLoader
 
 #### PARAMS START ####
-dataset = "data_sim"
-load_raw = False   # load (and plot) raw IMU data into interim data
+dataset = "data_stanford"
+load_raw = True   # load (and plot) raw IMU data into interim data
 get_stance_threshold = False  # determine stance threshold
-get_initial_contact = True   # determine IMU initial contact
+get_initial_contact = False  # determine IMU initial contact
 
 if dataset == "data_kiel":
     # kiel dataset
@@ -21,7 +21,7 @@ if dataset == "data_kiel":
         "pp077",
         #"pp111",
         "pp122",
-        # "pp152"
+        #"pp152",
         # "pp105",
         # "pp112",
         # "pp114",
@@ -29,7 +29,7 @@ if dataset == "data_kiel":
     ]
     runs = [
         #"gait1", 
-        # "gait2",
+        #"gait2",
         # "walk_slow",
         #"walk_preferred",
         # "walk_fast",
@@ -84,6 +84,28 @@ elif dataset == "data_sim":
         "regular"   
     ]
 
+elif dataset == "data_sim_cbf":
+    sub_list = ["S1"]
+    
+    runs = [
+        "leicht", 
+        "leicht2",
+        "leicht3",
+        "normal",
+        "stark"   
+    ]
+
+elif dataset == "data_stanford":
+    sub_list = ["S1"]
+    
+    runs = [
+        "6B", 
+        "6D",
+        "79",
+        "E6",
+        "EF",
+        "F3"   
+    ]
 
 
 with open(os.path.join(os.path.dirname(__file__), '..', 'path.json')) as f:
@@ -98,7 +120,7 @@ if load_raw:
     for i in range(len(sub_list)):
         for j in range(len(runs)):
             from_interim = False
-            data_path = os.path.join(sub_list[i], runs[j], "imu")  # folder containing the raw IMU data
+            data_path = os.path.join(sub_list[i], runs[j])#, "imu")  # folder containing the raw IMU data
             read_folder_path = os.path.join(raw_base_path, data_path)
             save_folder_path = os.path.join(interim_base_path, data_path)
 

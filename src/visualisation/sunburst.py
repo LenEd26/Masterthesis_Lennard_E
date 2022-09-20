@@ -8,35 +8,7 @@ IMU_features =  pd.read_excel("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/Ex
 print(IMU_features)
 IMU_features = IMU_features.rename(columns= {"N of Papers" : "count"})
 print(IMU_features)
-# disease_list = list(all_df.Disorder.unique())
-# print(disease_list)
-# print()
-# def get_tasks(df, col_name):
-#     ### get tasks for each disease as a flat list
-#     task_list_raw = [x.split(',') for x in df[col_name].dropna().tolist()]  # split by comma
-#     task_list = [item for sublist in task_list_raw for item in sublist]  # flatten the list
-#     task_list = [s.strip() for s in task_list]  # remove the ' ' if there is any
-#     task_list = [s.strip('*') for s in task_list]  # remove the ' ' if there is any
 
-#     # task_list.append(out.to_list())
-    
-#     return task_list
-
-# def get_sunburst_df(df, col_name):
-#     ### get dataframe with primary and secondary columns and count for the 2-level sunburst plot
-#     all_ds_df = pd.DataFrame()
-#     for ds in disease_list:
-#         df_temp = all_df[all_df['Disorder'] == ds]
-#         task_list = get_tasks(df_temp, col_name)
-#         ds_df = pd.Series(task_list).value_counts().to_frame().reset_index()
-#         ds_df.rename(columns={0:'count'}, inplace=True)
-#         ds_df['disease'] = ds
-#         all_ds_df = all_ds_df.append(ds_df)
-
-#     # rename column with a shorter name
-#     all_ds_df = all_ds_df.replace('Aphasia, dysarthria and dysphonia', 'Speech impairments')
-#     all_ds_df = all_ds_df.rename(columns={"index": col_name})
-#     return all_ds_df
 def two_level_sunburst(df, lev1, lev2='disease', subplots=False, swap_levels=False, color_map=None):
     """
     Plot and save sunburst plots from the DataFrame with the extracted data.

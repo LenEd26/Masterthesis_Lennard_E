@@ -12,6 +12,7 @@ matplotlib.use("WebAgg")
 df_sim_right = pd.read_csv("data_sim/aggregated_data/all_right_parameters.csv")
 df_sim_left = pd.read_csv("data_sim/aggregated_data/all_left_parameters.csv")
 data_kiel_right = pd.read_csv("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/data_kiel/aggregated_data/all_right_parameters.csv")
+data_kiel_left = pd.read_csv("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/data_kiel/aggregated_data/all_left_parameters.csv")
 
 def df_check_outlier_column(df):
     print(df.shape)
@@ -125,7 +126,7 @@ def subject_boxplots(df, name, subject, color_dict):
     plt.savefig("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/figures/"+ subject + name +"_stride_time_.png") 
     plt.close()
 
-def plot_check_kiel(df, name):
+def plot_check_kiel(df, name, color_dict_kiel):
     df_corr = df.iloc[:,:-6]
     print("df_corr_", df_corr.columns.tolist())
     plt.figure(figsize = (15,8))
@@ -137,13 +138,13 @@ def plot_check_kiel(df, name):
     sns.boxplot(x='variable', y='value', data = pd.melt(df_corr.loc[:,['stride_length', 'clearance', 'stride_time',
     'swing_time', 'stance_time', 'stance_ratio']]))
     plt.close()
-    sns.boxplot(x= 'subject', y='stride_length',data = df).set(title = "stride length of the different stroke categories " + name)
+    sns.boxplot(x= 'subject', y='stride_length',data = df, palette= color_dict_kiel).set(title = "stride length of the different stroke categories " + name)
     plt.savefig("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/figures/"+ name +"_stride_length_.png")  
     plt.close()
-    sns.boxplot(x= "subject", y='clearance',data = df).set(title = "clearance of the different stroke categories " + name)
+    sns.boxplot(x= "subject", y='clearance',data = df, palette= color_dict_kiel).set(title = "clearance of the different stroke categories " + name)
     plt.savefig("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/figures/"+ name +"_clearance_.png") 
     plt.close()
-    sns.boxplot( x= "subject", y='stride_time',data = df).set(title = "stride time of the different stroke categories " + name)
+    sns.boxplot( x= "subject", y='stride_time',data = df, palette= color_dict_kiel).set(title = "stride time of the different stroke categories " + name)
     plt.savefig("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/figures/"+ name +"_stride_time_.png") 
     plt.close()
 # fig, ax = plt.subplots(figsize = (18,10))
@@ -157,7 +158,7 @@ def plot_check_kiel(df, name):
 # plt.show()
 
 ########## MAIN #########
-## Data Sim
+## Data Sim --> CHECK WITH GIVEN OUTLIER AGAIN!
 # df_sim_right = exclude_outlier(df_sim_right)
 # df_sim_left = exclude_outlier(df_sim_left)
 # print(df_sim_right.describe())
@@ -171,4 +172,5 @@ def plot_check_kiel(df, name):
 data_kiel_right = df_check_outlier_column(data_kiel_right)
 # df_kiel_right = exclude_outlier(data_kiel_right)
 # plot_check_kiel(df_kiel_right, "kiel_right")
-plot_check_kiel(data_kiel_right, "kiel_right")
+color_dict_kiel = {subject: "r" if (subject == "pp077") or (subject == "pp122") else "b" for subject in data_kiel_right.subject.unique()}
+plot_check_kiel(data_kiel_right, "kiel_right",color_dict_kiel)

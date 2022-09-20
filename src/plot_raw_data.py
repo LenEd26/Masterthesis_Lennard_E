@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from src.LFRF_parameters.preprocessing.plot_raw_xyz import plot_acc_gyr
 
 #### PARAMS START ####
-dataset = "data_kiel"
+dataset = "data_stanford"
 load_raw = True   # load (and plot) raw IMU data into interim data
 
 if dataset == "data_kiel":
@@ -49,16 +49,26 @@ if dataset == "data_RNN":
         #"S4",
         #"S5",
     ]
-    # runs = [
-    #     # "gait1", 
-    #     # "gait2",
-    #     # "walk_slow",
-    #     "walk_preferred",
-    #     # "walk_fast",
-    #     "treadmill"
-    # ]
+    runs = [
+        # "gait1", 
+        # "gait2",
+        # "walk_slow",
+        "walk_preferred",
+        # "walk_fast",
+        #"treadmill"
+    ]
 
-
+elif dataset == "data_stanford":
+    sub_list = ["S1"]
+    
+    runs = [
+        "6B", 
+        "6D",
+        "79",
+        "E6",
+        "EF",
+        "F3"   
+    ]
 
 #### plot and load raw data ####
 if load_raw:
@@ -68,12 +78,13 @@ if load_raw:
     save_folder_path = os.path.join(interim_base_path, data_path)
 
     # select IMU locations to load
+
     IMU_loc_list = ['LF', 'RF']
     for loc in IMU_loc_list:
         if from_interim:  # load interim data
             df_loc = pd.read_csv(os.path.join(read_folder_path, loc + ".csv"))
         else:  # load raw data (& save file to the interim folder)
-            data_loader = DataLoader(read_folder_path, loc)
+            data_loader = DataLoader(read_folder_path, loc, sub_list, runs)
             df_loc = data_loader.load_csv_data()
             
             if dataset == "data_RNN":

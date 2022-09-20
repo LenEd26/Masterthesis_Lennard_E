@@ -5,6 +5,8 @@
     "data_imu_validation": "/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/data_imu_validation",
     "data_kiel": "/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/data_kiel",
     "data_sim": "/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/data_sim",
-    "processed_data_sim": "/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/data_sim/processed"
+    "processed_data_sim": "/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/data_sim/processed",
+    "data_sim_cbf":"/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/data_sim_cbf",
+    "data_stanford":"/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/data_stanford"
 
 }

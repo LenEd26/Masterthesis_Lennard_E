@@ -1,3 +1,4 @@
+from email.utils import decode_rfc2231
 import os
 import json
 import sys
