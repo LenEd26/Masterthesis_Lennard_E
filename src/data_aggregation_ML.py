@@ -8,7 +8,7 @@ import pathlib
 
 
 ### previously set parameters depending on folder structure
-dataset = "data_kiel"
+dataset = "data_sim"
 
 ### List of Process files ###
 #### Processed datapath for each dataset
@@ -43,7 +43,9 @@ def concat_df_LR(side):
     # define left/right side as string
     files = glob.glob(aggregated_data_path + side +"_foot_core_params_*" + "*.csv")
     df = pd.concat((pd.read_csv(f) for f in files), ignore_index=True)
+    df["side"] = side
     df.to_csv(aggregated_data_path + "all_"+side + "_parameters.csv", index = False)
+    return df
 
 
 def add_column_LR(side, subjects, methods):
@@ -67,6 +69,10 @@ def add_column_LR(side, subjects, methods):
 ############################## MAIN ###########################
 add_column_LR( "right", subjects, methods)
 add_column_LR( "left", subjects, methods)
-concat_df_LR("left")
-concat_df_LR("right")
 
+### window the df and add symmetry index column?
+
+LF_df = concat_df_LR("left")
+RF_df = concat_df_LR("right")
+
+# create one DF/File?

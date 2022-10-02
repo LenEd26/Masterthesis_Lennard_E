@@ -8,6 +8,7 @@ import numpy as np
 from scipy.stats import variation
 
 def aggregate_parameters_from_df(df, select_strides=False, onesided=False):
+    '''creates a row of each average and variation for each colummn of the df'''
 
     print(".", end="")
     df.reset_index(inplace=True)
@@ -23,9 +24,7 @@ def aggregate_parameters_from_df(df, select_strides=False, onesided=False):
         'stride_time',
         'swing_time',
         'stance_time',
-        'stance_ratio',
-        'fo_time',
-        'ic_time',
+        'stance_ratio'
     ])
 
     # calculate cadence and speed for single foot
@@ -43,8 +42,6 @@ def aggregate_parameters_from_df(df, select_strides=False, onesided=False):
             'swing_time_avg',
             'stance_time_avg',
             'stance_ratio_avg',
-            'fo_time_avg',
-            'ic_time_avg',
             'cadence_avg',
             'speed_avg',
             'stride_length_CV',
@@ -53,21 +50,22 @@ def aggregate_parameters_from_df(df, select_strides=False, onesided=False):
             'swing_time_CV',
             'stance_time_CV',
             'stance_ratio_CV',
-            'fo_time_CV',
-            'ic_time_CV',
             'cadence_CV',
             'speed_CV',
         ])
     aggregate_params.loc[0] = aggregate_list
+    #print("aggregated params", aggregate_params)
 
     all_aggregate_params = aggregate_params
 
     return all_aggregate_params
 
-def calculate_SI_new(avg_list_left, avg_list_right):
+def calculate_SI_new(win_df_left, win_df_right):
     """
-    calculate symmetry index
+    calculate symmetry index from averge and variation df for left and right foot
     """
+    avg_list_left = win_df_left.iloc[:, :8]
+    avg_list_right = win_df_right.iloc[:, :8]
     diff_avg = []
     sum_avg = []
     # for name in SI_List:
@@ -75,8 +73,12 @@ def calculate_SI_new(avg_list_left, avg_list_right):
             for left_tuple, right_tuple in zip(avg_list_left[left_col], avg_list_right[right_col]):
                 value = abs(left_tuple - right_tuple)
                 diff_avg.append(value)
-                for t in zip(avg_list_left[left_col], avg_list_right[right_col]):
-                    sum_avg.append(sum(t))
+            for t in zip(avg_list_left[left_col], avg_list_right[right_col]):
+                sum_avg.append(sum(t))
+            # print("diff_avg_", diff_avg)
+            # print(len(diff_avg))
+            # print("sum_avg_", sum_avg)
+            # print(len(sum_avg))
         
     SI_List = [x / (0.5 * y) for x, y in zip(diff_avg, sum_avg)]
 
@@ -101,8 +103,6 @@ def get_SI_series(SI_list) -> pd.Series:
             'swing_time_SI',
             'stance_time_SI',
             'stance_ratio_SI',
-            'fo_time_SI',
-            'ic_time_SI',
             'cadence_SI',
             'speed_SI',
         ]
@@ -131,6 +131,9 @@ def construct_windows(df, window_sz=10, window_slide=2):
     return windowed_dfs
 
 def construct_windowed_df (df, window_sz, window_slide):
+    ''' creates a windowed df from the gait parameters 
+        and calculates the average and variation for each column 
+        -> for Symmetry Index use '''
     dat = []
     #for df in df_list:
     windows = construct_windows(df, window_sz=window_sz, window_slide=window_slide)
@@ -153,64 +156,43 @@ def SI_LFRF(left, right):
         SI = calculate_SI(row1, row2)
     return SI
 
-# def SI_LFRF_2(left, right):
-#     """ 
-#     for seperate windowed Dataframes of LF and RF parameters to calculate a SI 
-#     creates a df with the SI of the Subject
-#     """
-#     SI_LFRF=[]
-#     for row1 in range(len(left)):
+def create_DF_SI(list_SI):
+    '''creates the df for further use of the Symmetry Index'''
+    split_list_SI = np.array_split(list_SI,13)
+    df_SI = pd.DataFrame (split_list_SI, columns = [
+                'stride_length_SI',
+                'clearance_SI',
+                'stride_time_SI',
+                'swing_time_SI',
+                'stance_time_SI',
+                'stance_ratio_SI',
+                'cadence_SI',
+                'speed_SI',
+            ])
 
-#         for row2 in range(len(right):
+    print(df_SI.describe())
+    print(df_SI)
+    return df_SI
 
-#             SI = calculate_SI(row1, row2)
-#         SI_LFRF.append(SI)
-#     return SI_LFRF
 
-###Main
-df_left = pd.read_csv('/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/data_sim/aggregated_data/left_foot_core_params_1PS1.csv')
-df_right = pd.read_csv('/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/data_sim/aggregated_data/right_foot_core_params_1PS1.csv')
+### Main
+df_left = pd.read_csv('/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/data_sim/aggregated_data/left_foot_core_params_1P_S1.csv')
+df_right = pd.read_csv('/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/data_sim/aggregated_data/right_foot_core_params_1P_S1.csv')
 win_size = 10
 win_slide = 2
-
-print(df_left)
-print(df_left.describe())
+# df_left = df_left.drop(['ic_time', 'fo_time'], axis=1)
+# df_right = df_right.drop(['ic_time', 'fo_time'], axis=1)
+# print(df_left)
+# print(df_left.describe())
 
 win_df_left = construct_windowed_df(df_left, win_size, win_slide)
 win_df_right = construct_windowed_df(df_right, win_size, win_slide)
-print("df, ",  win_df_left)
-print(win_df_left.describe())
-#win_list_left = win_df_left.values.tolist()
-#win_list_right = win_df_right.values.tolist()
+print("df_left, ",  win_df_left)
+print("df_right, ",  win_df_right)
+#print(win_df_left.describe())
 
-avg_left = win_df_left.iloc[:, :10]
-print("avg left ",avg_left)
-avg_right = win_df_right.iloc[:, :10]
+Sym_list_1PS1 = calculate_SI_new(win_df_left, win_df_right)
+#print(len(Sym_list_1PS1))
+#print(Sym_list_1PS1)
 
-Sym_list_1PS1 = calculate_SI_new(avg_left, avg_right)
-print(Sym_list_1PS1)
-# split_list = [Sym_list_1PS1[x:x+13] for x in range(0, len(Sym_list_1PS1), 13)]
-# print("split  ",split_list)
-split_list = np.array_split(Sym_list_1PS1,13)
-print("split  ",split_list)
-# SI_series_1PS1 = get_SI_series(split_list)
-# print(SI_series_1PS1)
-
-# SI_series_1PS1 = pd.DataFrame(get_SI_series(Sym_list_1PS1).transpose())
-# SI_series_1PS1 = pd.concat([win_df_left, SI_series_1PS1 ], axis=1)
-# print(SI_series_1PS1)
-df_SI = pd.DataFrame (split_list, columns = [
-            'stride_length_SI',
-            'clearance_SI',
-            'stride_time_SI',
-            'swing_time_SI',
-            'stance_time_SI',
-            'stance_ratio_SI',
-            'fo_time_SI',
-            'ic_time_SI',
-            'cadence_SI',
-            'speed_SI',
-        ])
-
-print(df_SI.describe)
-print(df_SI)
+create_DF_SI(Sym_list_1PS1)

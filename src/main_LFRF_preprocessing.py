@@ -2,7 +2,7 @@ import json
 import os
 import pandas as pd
 import matplotlib
-#matplotlib.use("WebAgg")
+matplotlib.use("WebAgg")
 import matplotlib.pyplot as plt
 from src.LFRF_parameters.preprocessing.plot_raw_xyz import plot_acc_gyr
 from src.LFRF_parameters.preprocessing.get_imu_gyro_thresholds import AccPlot, GyroPlot
@@ -10,9 +10,9 @@ from data_reader.DataLoader import DataLoader
 
 #### PARAMS START ####
 dataset = "data_stanford"
-load_raw = True   # load (and plot) raw IMU data into interim data
+load_raw = True  # load (and plot) raw IMU data into interim data
 get_stance_threshold = False  # determine stance threshold
-get_initial_contact = False  # determine IMU initial contact
+get_initial_contact = False # determine IMU initial contact
 
 if dataset == "data_kiel":
     # kiel dataset
@@ -99,12 +99,7 @@ elif dataset == "data_stanford":
     sub_list = ["S1"]
     
     runs = [
-        "6B", 
-        "6D",
-        "79",
-        "E6",
-        "EF",
-        "F3"   
+        "NLA"   
     ]
 
 
@@ -122,7 +117,7 @@ if load_raw:
             from_interim = False
             data_path = os.path.join(sub_list[i], runs[j])#, "imu")  # folder containing the raw IMU data
             read_folder_path = os.path.join(raw_base_path, data_path)
-            save_folder_path = os.path.join(interim_base_path, data_path)
+            save_folder_path = os.path.join(interim_base_path, data_path, "imu")
 
             # select IMU locations to load
             IMU_loc_list = ['LF', 'RF']
