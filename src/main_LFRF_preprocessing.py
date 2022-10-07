@@ -96,10 +96,13 @@ elif dataset == "data_sim_cbf":
     ]
 
 elif dataset == "data_stanford":
-    sub_list = ["S1"]
+    sub_list = ["S1",
+                 #"S2"   
+                 ]
     
     runs = [
-        "NLA"   
+        "dummy_ts",
+        #"NLA"   
     ]
 
 
@@ -108,7 +111,6 @@ with open(os.path.join(os.path.dirname(__file__), '..', 'path.json')) as f:
 raw_base_path = os.path.join(paths[dataset], "raw")
 interim_base_path = os.path.join(paths[dataset], "interim")
 #### PARAMS END ####
-
 
 #### plot and load raw data ####
 if load_raw:

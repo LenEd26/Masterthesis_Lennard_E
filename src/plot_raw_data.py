@@ -9,10 +9,24 @@ import matplotlib.pyplot as plt
 from src.LFRF_parameters.preprocessing.plot_raw_xyz import plot_acc_gyr
 
 #### PARAMS START ####
-dataset = "data_stanford"
+dataset = "data_sim"
 load_raw = True   # load (and plot) raw IMU data into interim data
 
-if dataset == "data_kiel":
+if dataset == "data_sim":
+    # Simulated dataset
+    sub_list = [
+        "S1",
+        "S2"
+         ]
+
+    runs = [
+        "1P", 
+        "2P",
+        "3P",
+        "regular"   
+    ]
+
+elif dataset == "data_kiel":
     # kiel dataset
 
     sub_list = [
@@ -34,6 +48,8 @@ if dataset == "data_kiel":
         # "treadmill"
     ]
 
+
+#TODO Use path.json to wokr with root path
 raw_base_path = os.path.join("Masterthesis_Lennard_E", dataset, "raw")
 interim_base_path = os.path.join("Masterthesis_Lennard_E", dataset, "interim")
 print(raw_base_path)
@@ -59,21 +75,16 @@ if dataset == "data_RNN":
     ]
 
 elif dataset == "data_stanford":
-    sub_list = ["S1"]
+    sub_list = ["S1", "S2"]
     
     runs = [
-        "6B", 
-        "6D",
-        "79",
-        "E6",
-        "EF",
-        "F3"   
+        "NLA"  
     ]
 
 #### plot and load raw data ####
 if load_raw:
     from_interim = False
-    data_path = os.path.join(sub_list[0], runs[0])#, "imu")  # folder containing the raw IMU data
+    data_path = os.path.join(sub_list[0], runs[0], "imu")  # folder containing the raw IMU data
     read_folder_path = os.path.join(raw_base_path, data_path)
     save_folder_path = os.path.join(interim_base_path, data_path)
 
