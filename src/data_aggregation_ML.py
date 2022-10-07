@@ -61,10 +61,13 @@ for subject in subjects:
 #     return df
 
 def concat_df_LR():
-            files_left = glob.glob(aggregated_data_path + "left_foot_core_params_*" + "*.csv")
-            #print("files_left", files_left)
-            files_right = glob.glob(aggregated_data_path + "right_foot_core_params_*" + "*.csv")
+            files_left = sorted(glob.glob(aggregated_data_path + "left_foot_core_params_*" + "*.csv"))
+            print("files_left", files_left)
+            files_right = sorted(glob.glob(aggregated_data_path + "right_foot_core_params_*" + "*.csv"))
+            print("files_right", files_right)
             for path_left, path_right in zip(files_left, files_right):
+                # print("path_left", path_left)
+                # print("path_right", path_right)
                 df_left = pd.read_csv(path_left)
                 # print("df_left:", df_left.describe)
                 # print("left columns__", df_left. columns)
@@ -80,7 +83,7 @@ def concat_df_LR():
                 params_df = merge_df(df_left, df_right, SI_df)
                 #df = pd.concat((pd.read_csv(f) for f in files), ignore_index=True)
                 s = df_left["subject"].iat[0] 
-                m = df_left["method"].iat[0] 
+                m = df_left["severity"].iat[0] 
                 params_df.to_csv(final_data_path + "all_" + s +"_"+ m + "_parameters.csv", index = False)
             return params_df
 
@@ -103,7 +106,7 @@ def add_column_LR(side, subjects, methods):
                     #print("Colnames dataframe before CW", df.columns)
                     win_df = construct_windowed_df(df, win_size, win_slide, side)
                     win_df = win_df.add_suffix("_" + side)
-                    win_df["method"] = method
+                    win_df["severity"] = method
                     win_df["subject"] = subject
                     #print("Colnames win_dataframe ", win_df.columns)
                     win_df.to_csv(aggregated_data_path + side +"_foot_core_params_" + method +"_" + subject + ".csv", index = False)
@@ -117,4 +120,3 @@ add_column_LR( "left", subjects, methods)
 
 final_df_ = concat_df_LR()
 
-# create one DF/File?

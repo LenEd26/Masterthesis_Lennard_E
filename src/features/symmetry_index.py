@@ -91,10 +91,10 @@ def calculate_SI_new(win_df_left, win_df_right):
                 diff_avg.append(value)
             for t in zip(avg_list_left[left_col], avg_list_right[right_col]):
                 sum_avg.append(sum(t))
-            print("diff_avg_", diff_avg)
-            print(len(diff_avg))
-            print("sum_avg_", sum_avg)
-            print(len(sum_avg))
+            # print("diff_avg_", diff_avg)
+            # print(len(diff_avg))
+            # print("sum_avg_", sum_avg)
+            # print(len(sum_avg))
         
     SI_List = [x / (0.5 * y) for x, y in zip(diff_avg, sum_avg)]
 
@@ -155,26 +155,28 @@ def create_DF_SI(list_SI):
                 'speed_SI',
             ])
 
-    print(df_SI.describe())
-    print(df_SI)
+    # print(df_SI.describe())
+    # print(df_SI)
     return df_SI
 
 def merge_df(df1, df2, SI_df):#, score, subject):
     #merges two df with different length, chooses shorter df first and saves it in folder
-    print("length df1_:", len(df1))
-    print("length df2_:", len(df2))
-    print("length SI_df_:", len(SI_df))
+    print("length df1_:", df1.describe())
+    print("length df2_:", df2.describe())
+    # print("length SI_df_:", len(SI_df))
     if len(df1) < len(df2):
         mergedf = pd.concat([df1,df2], join='inner', axis = 1)
     else:
         mergedf = pd.concat([df2,df1], join='inner', axis = 1)
     merge_final = pd.concat([mergedf,SI_df], axis = 1)
+    merge_final = merge_final.loc[:,~merge_final.T.duplicated(keep='first')]
+    print(merge_final)
 
     # merge_final["score"] = score
     # merge_final["subject"] = subject
-    print('Merged data frame:', merge_final)
-    print(merge_final.describe())
-    print("length merge_:", len(merge_final))
+    # print('Merged data frame:', merge_final)
+    # print(merge_final.describe())
+    # print("length merge_:", len(merge_final))
     #merge_final.to_csv(AV_SI_data_path + "AV_SI" + "_parameters.csv", index = True, header=True)
     return merge_final
 #all_windows_df.to_csv(AV_SI_data_path + "AV_SI"+ side + "_parameters.csv", index = False)
@@ -182,7 +184,7 @@ def merge_df(df1, df2, SI_df):#, score, subject):
 # ### Main
 # df_left = pd.read_csv('/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/data_sim/aggregated_data/left_foot_core_params_1P_S1.csv')
 # df_right = pd.read_csv('/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/data_sim/aggregated_data/right_foot_core_params_1P_S1.csv')
-# # TODO -> get all single LF/RF  from each patient -> see if you can pass Subject + run on without calculating it and keep it in
+
 # win_size = 10
 # win_slide = 2
 # # df_left = df_left.drop(['ic_time', 'fo_time'], axis=1)
