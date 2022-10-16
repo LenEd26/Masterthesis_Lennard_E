@@ -69,7 +69,7 @@ def plot_acc_gyr(df, columns, title, save_fig_path):
     if not os.path.exists(save_fig_path):
         os.makedirs(save_fig_path)
     plt.savefig(os.path.join(save_fig_path, str(title + '.png')), bbox_inches='tight')
-    # plt.show()
+    plt.show()
 
 
 #### main ####

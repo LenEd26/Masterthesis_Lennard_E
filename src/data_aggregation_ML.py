@@ -51,45 +51,45 @@ for subject in subjects:
 # name -> list of subject names
 # method -> method of gait conduction (e.g. treadmill)
 
-
-# def concat_df_LR(side):
-#     # define left/right side as string
-#     files = glob.glob(aggregated_data_path + side +"_foot_core_params_*" + "*.csv")
-#     df = pd.concat((pd.read_csv(f) for f in files), ignore_index=True)
-#     df["side"] = side
-#     df.to_csv(aggregated_data_path + "all_"+side + "_parameters.csv", index = False)
-#     return df
+### TODO Put in the CV features??
 
 def concat_df_LR():
-            files_left = sorted(glob.glob(aggregated_data_path + "left_foot_core_params_*" + "*.csv"))
-            print("files_left", files_left)
-            files_right = sorted(glob.glob(aggregated_data_path + "right_foot_core_params_*" + "*.csv"))
-            print("files_right", files_right)
-            for path_left, path_right in zip(files_left, files_right):
-                # print("path_left", path_left)
-                # print("path_right", path_right)
-                df_left = pd.read_csv(path_left)
-                # print("df_left:", df_left.describe)
-                # print("left columns__", df_left. columns)
-                df_right = pd.read_csv(path_right)
-                # print("df_right:", df_right.describe)
-                # print("right columns__", df_right. columns)
-                SI_df = calculate_SI_new(df_left, df_right)
-                # print("list SI", len(SI_df))
-                SI_df = create_DF_SI(SI_df)
-                #print("df_SI:", SI_df.describe)
-                df_left = df_left.drop(columns = exclude_columns_left)
-                df_right = df_right.drop(columns = exclude_columns_right)
-                params_df = merge_df(df_left, df_right, SI_df)
-                #df = pd.concat((pd.read_csv(f) for f in files), ignore_index=True)
-                s = df_left["subject"].iat[0] 
-                m = df_left["severity"].iat[0] 
-                params_df.to_csv(final_data_path + "all_" + s +"_"+ m + "_parameters.csv", index = False)
-            return params_df
+    ''' function gatheres the file paths to all aggregated dataframes from left and right foot seperately
+    then the df with averages and variation are used to calculate the Symmetry Index. The SI and the previous dataframes
+    are then merged to build the final dataframe of gait parameters for ML use
+    '''
+    files_left = sorted(glob.glob(aggregated_data_path + "left_foot_core_params_*" + "*.csv"))
+    #print("files_left", files_left)
+    files_right = sorted(glob.glob(aggregated_data_path + "right_foot_core_params_*" + "*.csv"))
+    #print("files_right", files_right)
+    for path_left, path_right in zip(files_left, files_right):
+        # print("path_left", path_left)
+        # print("path_right", path_right)
+        df_left = pd.read_csv(path_left)
+        # print("df_left:", df_left.describe)
+        # print("left columns__", df_left. columns)
+        df_right = pd.read_csv(path_right)
+        # print("df_right:", df_right.describe)
+        # print("right columns__", df_right. columns)
+        SI_df = calculate_SI_new(df_left, df_right)
+        # print("list SI", len(SI_df))
+        SI_df = create_DF_SI(SI_df)
+        #print("df_SI:", SI_df.describe)
+        #df_left = df_left.drop(columns = exclude_columns_left)
+        #df_right = df_right.drop(columns = exclude_columns_right)
+        params_df = merge_df(df_left, df_right, SI_df)
+        #df = pd.concat((pd.read_csv(f) for f in files), ignore_index=True)
+        s = df_left["subject"].iat[0] 
+        m = df_left["severity"].iat[0] 
+        params_df.to_csv(final_data_path + "all_" + s +"_"+ m + "_parameters.csv", index = False)
+    return params_df
 
 
 def add_column_LR(side, subjects, methods):
-    '''Takes a list of file paths of LF or RF and adds subject + method column for LF or RF'''
+    '''Takes a list of file paths of LF or RF and adds subject + severity column for LF or RF
+    additionally windowed dataframes and the averages of these df and their gait parameters are created
+    and saved as csv in the aggregated data folder
+    '''
     for subject in subjects:
         for method in methods:
             sub_method_dir = os.path.join(os.path.join(processed_base_path, subject), method)

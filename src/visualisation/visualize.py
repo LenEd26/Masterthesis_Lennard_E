@@ -8,11 +8,25 @@ import matplotlib.pyplot as plt
 import matplotlib
 from scipy import stats
 matplotlib.use("WebAgg")
+import os
+import json
+import glob 
 
-df_sim_right = pd.read_csv("data_sim/aggregated_data/all_right_parameters.csv")
-df_sim_left = pd.read_csv("data_sim/aggregated_data/all_left_parameters.csv")
-data_kiel_right = pd.read_csv("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/data_kiel/aggregated_data/all_right_parameters.csv")
-data_kiel_left = pd.read_csv("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/data_kiel/aggregated_data/all_left_parameters.csv")
+# df_sim_right = pd.read_csv("data_sim/aggregated_data/all_right_parameters.csv")
+# df_sim_left = pd.read_csv("data_sim/aggregated_data/all_left_parameters.csv")
+# data_kiel_right = pd.read_csv("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/data_kiel/aggregated_data/all_right_parameters.csv")
+# data_kiel_left = pd.read_csv("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/data_kiel/aggregated_data/all_left_parameters.csv")
+
+dataset = "data_sim"
+# Define filepath
+
+with open(os.path.join(os.getcwd(), 'path.json')) as f:
+    paths = json.loads(f.read())
+final_datapath= os.path.join(paths[dataset], "final_data")
+# Load Excel file using Pandas
+#file = pd.ExcelFile(final_datapath)
+csv_file = glob.glob(os.path.join(final_datapath, "*.csv"))
+
 
 def df_check_outlier_column(df):
     print(df.shape)
@@ -74,43 +88,35 @@ def exclude_outlier(df):
     return df
 
 
-def plot_check_df(df, name, color_dict):
-    df_corr = df.iloc[:,:-6]
-    print("df_corr_", df_corr.columns.tolist())
+def plot_check_df(df, subject, color_dict, side, feature, filter_for_sub):
+    if side == "left":
+        #col_list = [col for col in df.columns if col.endswith('_left')]
+        df_col = df.loc[:,df.columns.str.endswith(side)]
+        df_sub = df.loc[:, ["subject", "severity"]]
+        df = pd.concat([df_col, df_sub], axis=1)
+    elif side == "right":
+        col_list = [col for col in df.columns if col.endswith('_right')]
+        df = df[col_list, "subject", "severity"]
+    elif side == "SI": 
+        col_list = [col for col in df.columns if col.endswith('_SI')]
+        df = df[col_list, "subject", "severity"]
+
+    if filter_for_sub == True:
+        df = df[df["subject"] == subject]
+
     plt.figure(figsize = (15,8))
-    sns.heatmap(df_corr.corr(), xticklabels = 1, yticklabels = 1)
+    sns.heatmap(df.corr(), xticklabels = 1, yticklabels = 1)
     plt.show()
     plt.close()
-    sns.boxplot(x='variable', y='value', data = pd.melt(df_corr.loc[:,["stride_index", 'timestamp','fo_time', 'ic_time']]))
+    sns.boxplot(x= 'subject', y= feature + side, data=df).set(title= "stride length of the different stroke categories " + subject)
     #plt.show()
     plt.close()
-    sns.boxplot(x='variable', y='value', data = pd.melt(df_corr.loc[:,['stride_length', 'clearance', 'stride_time',
-    'swing_time', 'stance_time', 'stance_ratio']]))
+    sns.boxplot(x= 'severity', y= feature + side, data=df, palette= color_dict, order = color_dict).set(title= "stride length of the different stroke categories " + subject)
     #plt.show()
+    plt.savefig("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/figures/"+ subject + feature +".png")  
     plt.close()
-    sns.boxplot(x= 'subject', y='stride_length',data=df).set(title= "stride length of the different stroke categories " + name)
-    #plt.show()
-    plt.close()
-    sns.boxplot(x= 'method', y='stride_length', data=df, palette= color_dict, order = color_dict).set(title= "stride length of the different stroke categories " + name)
-    #plt.show()
-    plt.savefig("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/figures/"+ name +"_stride_length_.png")  
-    plt.close()
-    sns.boxplot(x= "subject", y='clearance',data=df)
-    #plt.show()
-    plt.close()
-    sns.boxplot(x= "method", y='clearance',data=df, palette= color_dict, order = color_dict).set(title= "clearance of the different stroke categories " + name)
-    #plt.show()
-    plt.savefig("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/figures/"+ name +"_clearance_.png") 
-    plt.close()
-    sns.boxplot( x= "subject", y='stride_time',data=df)
-    #plt.show()
-    plt.close()
-    sns.boxplot( x= "method", y='stride_time',data=df, palette= color_dict, order = color_dict).set(title= "stride time of the different stroke categories " + name)
-    #plt.show()
-    plt.savefig("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/figures/"+ name +"_stride_time_.png") 
-    plt.close()
-    sns.pairplot(df_corr)
-    #plt.show()
+    sns.pairplot(df)
+    plt.show()
 
 
 def subject_boxplots(df, name, subject, color_dict):
@@ -158,19 +164,33 @@ def plot_check_kiel(df, name, color_dict_kiel):
 # plt.show()
 
 ########## MAIN #########
-## Data Sim --> CHECK WITH GIVEN OUTLIER AGAIN!
+# Data Sim --> CHECK WITH GIVEN OUTLIER AGAIN!
 # df_sim_right = exclude_outlier(df_sim_right)
 # df_sim_left = exclude_outlier(df_sim_left)
 # print(df_sim_right.describe())
-# color_dict_sim = {"regular":"C0", "1P":"C1", "2P":"C2", "3P":"C3"}
-#plot_check_df(df_sim_right, "sim_right", color_dict_sim)
+side ="_left" #"_right"
+feature = "stride_length_avg"
+subject = "S1"
+df_list = []
+
+print(csv_file)
+for path in csv_file:
+    df_s = pd.read_csv(path)
+    df_list.append(df_s)
+data = pd.concat(df_list, axis = 0, ignore_index= True)    
+print("appending data:", data.describe())
+
+
+
+color_dict_sim = {"regular":"C0", "1P":"C1", "2P":"C2", "3P":"C3"}
+plot_check_df(data, subject, color_dict_sim, side, feature, filter_for_sub=True)
 #plot_check_df(df_sim_left, "sim_left", color_dict_sim)
-#subject_boxplots(df_sim_left, "_sim_left", "S1", color_dict_sim)
+#subject_boxplots(data, "_sim_left", "S1", color_dict_sim)
 #subject_boxplots(df_sim_left, "_sim_left", "S2", color_dict_sim)
 
 ## Data Kiel
-data_kiel_right = df_check_outlier_column(data_kiel_right)
-# df_kiel_right = exclude_outlier(data_kiel_right)
-# plot_check_kiel(df_kiel_right, "kiel_right")
-color_dict_kiel = {subject: "r" if (subject == "pp077") or (subject == "pp122") else "b" for subject in data_kiel_right.subject.unique()}
-plot_check_kiel(data_kiel_right, "kiel_right",color_dict_kiel)
+# data_kiel_right = df_check_outlier_column(data_kiel_right)
+# # df_kiel_right = exclude_outlier(data_kiel_right)
+# # plot_check_kiel(df_kiel_right, "kiel_right")
+# color_dict_kiel = {subject: "r" if (subject == "pp077") or (subject == "pp122") else "b" for subject in data_kiel_right.subject.unique()}
+# plot_check_kiel(data_kiel_right, "kiel_right",color_dict_kiel)

@@ -1,7 +1,7 @@
 ### Data Kiel
 #Folder path: data_kiel/raw/*any/all patients*/treadmill/imu/LF and RF
 # patients with treadmill data? -> 
-
+import json
 from data_reader.DataLoader import DataLoader
 import os
 import pandas as pd
@@ -9,8 +9,22 @@ import matplotlib.pyplot as plt
 from src.LFRF_parameters.preprocessing.plot_raw_xyz import plot_acc_gyr
 
 #### PARAMS START ####
-dataset = "data_sim"
+dataset = "data_sim_cbf"
 load_raw = True   # load (and plot) raw IMU data into interim data
+
+if dataset == "data_sim_cbf":
+    # Simulated dataset
+    sub_list = [
+        "S1"
+         ]
+
+    runs = [
+        "leicht", 
+        "leicht2",
+        "leicht3",
+        "normal",
+        "stark"   
+    ]
 
 if dataset == "data_sim":
     # Simulated dataset
@@ -50,9 +64,13 @@ elif dataset == "data_kiel":
 
 
 #TODO Use path.json to wokr with root path
-raw_base_path = os.path.join("Masterthesis_Lennard_E", dataset, "raw")
-interim_base_path = os.path.join("Masterthesis_Lennard_E", dataset, "interim")
-print(raw_base_path)
+with open(os.path.join(os.path.dirname(__file__), '..', 'path.json')) as f:
+    paths = json.loads(f.read())
+raw_base_path = os.path.join(paths[dataset], "raw")
+interim_base_path = os.path.join(paths[dataset], "interim")
+# raw_base_path = os.path.join("Masterthesis_Lennard_E", dataset, "raw")
+# interim_base_path = os.path.join("Masterthesis_Lennard_E", dataset, "interim")
+# print(raw_base_path)
 
 
 if dataset == "data_RNN":
@@ -84,13 +102,16 @@ elif dataset == "data_stanford":
 #### plot and load raw data ####
 if load_raw:
     from_interim = False
-    data_path = os.path.join(sub_list[0], runs[0], "imu")  # folder containing the raw IMU data
+    data_path = os.path.join(sub_list[0], runs[0])#, "imu")  # folder containing the raw IMU data
     read_folder_path = os.path.join(raw_base_path, data_path)
     save_folder_path = os.path.join(interim_base_path, data_path)
 
     # select IMU locations to load
+    if dataset == "data_sim_cbf":
+        IMU_loc_list = ['LF', 'RF', "LW", "RW", "ST" ]
 
-    IMU_loc_list = ['LF', 'RF']
+    else:
+        IMU_loc_list = ['LF', 'RF']
     for loc in IMU_loc_list:
         if from_interim:  # load interim data
             df_loc = pd.read_csv(os.path.join(read_folder_path, loc + ".csv"))
