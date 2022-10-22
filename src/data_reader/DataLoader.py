@@ -13,8 +13,8 @@ class DataLoader:
         self.data_path = data_path
         self.location_kw = location_kw
         self.data_df = None
-        #self.sub_list = sub_list
-        #self.score = runs
+        # self.sub_list = sub_list
+        # self.score = runs
 
     def load_csv_data(self):
         """load .csv data that are already formatted
@@ -118,7 +118,8 @@ class DataLoader:
             return
 
         # extract data columns
-        raw_data_df = pd.read_csv(os.path.join(self.data_path, file_name), skiprows=7, low_memory=False)#, on_bad_lines='skip')#
+        raw_data_df = pd.read_csv(os.path.join(self.data_path, file_name) , low_memory=False)# skiprows=7, on_bad_lines='skip')#
+        print(raw_data_df.describe())
         self.data_df = raw_data_df.filter(['SampleTimeFine', 'Gyr_X', 'Gyr_Y', 'Gyr_Z', 'Acc_X', 'Acc_Y', 'Acc_Z'], axis=1)
         self.data_df = self.data_df.rename(columns={'SampleTimeFine': 'timestamp',
                                 'Acc_X': 'AccY',
@@ -130,6 +131,7 @@ class DataLoader:
 
         self.data_df = self.data_df.apply(pd.to_numeric, errors='coerce')  # convert all columns of DataFrame to numbers
         self.data_df.dropna(inplace=True)  # in case there are non-numeric values being converted to NaN
+        print(self.data_df.describe())
         self.data_df["timestamp"] = self.data_df["timestamp"] * 1e-6  # convert time from millisecond to second
         self.data_df["GyrX"] = self.data_df["GyrX"] * (-1)  # invert gyro Y axis for gait event detection
         self.data_df['AccX'] = self.data_df['AccX'] / 9.8 * (-1)
@@ -432,12 +434,53 @@ class DataLoader:
             os.makedirs(save_path)
 
         try:
-            self.data_df.to_csv(save_path + '/' + self.location_kw + '.csv')
+            self.data_df.to_csv(save_path + '/' + self.location_kw + '.csv', mode = "w+")
         except AttributeError:
             print("Could not save to csv: Data not loaded yet.")
         else:
             print('IMU data loaded and saved.')
 
 
+    def load_stanford_data(self):
+        # find file containing key word for left or right foot
+        no_file = True
+        for file in os.listdir(self.data_path):
+            if fnmatch.fnmatch(file, '*.csv') and (self.location_kw in file):
+                file_name = file
+                print(file_name)
+                no_file = False
+
+        if no_file:
+            print('No file for ' + self.location_kw + ' found.')
+            return
+
+        # extract data columns
+        raw_data_df = pd.read_csv(os.path.join(self.data_path, file_name) , low_memory=False)#, skiprows=7, on_bad_lines='skip')#
+        print(raw_data_df.describe())
+        self.data_df = raw_data_df.filter(['SampleTimeFine', 'Gyr_X', 'Gyr_Y', 'Gyr_Z', 'Acc_X', 'Acc_Y', 'Acc_Z'], axis=1)
+        self.data_df = self.data_df.rename(columns={'SampleTimeFine': 'timestamp',
+                                 'Acc_X': 'AccY',
+                                 'Acc_Y': 'AccX',
+                                 'Acc_Z': 'AccZ',
+                                 'Gyr_Y': 'GyrY',
+                                 'Gyr_X': 'GyrX',
+                                 'Gyr_Z': 'GyrZ'})
+
+        self.data_df = self.data_df.apply(pd.to_numeric, errors='coerce')  # convert all columns of DataFrame to numbers
+        self.data_df.dropna(inplace=True)  # in case there are non-numeric values being converted to NaN
+        print(self.data_df.describe())
+        self.data_df["timestamp"] = self.data_df["timestamp"] 
+        self.data_df["GyrX"] = self.data_df["GyrX"] * (57.2958)
+        self.data_df["GyrY"] = self.data_df["GyrY"] * (57.2958)
+        self.data_df["GyrZ"] = self.data_df["GyrZ"] * (57.2958)  # invert gyro Y axis for gait event detection
+        self.data_df['AccX'] = self.data_df['AccX'] / 9.8 #* (-1)
+        self.data_df['AccY'] = self.data_df['AccY'] / 9.8
+        self.data_df['AccZ'] = self.data_df['AccZ'] / 9.8
+        #self.data_df["ID"] =  self.data_df[self.sub_list[0]]
+        #self.data_df["Score"] =  self.data_df[self.score[0]]
+        return self.data_df 
+
 if __name__ == '__main__':
     pass
+
+

@@ -68,13 +68,15 @@ class Pipeline:
             self.config['runs'][run_num],
             "imu"
         )
+        print("folder path ________:", folder_path)
         imus = {}
         for kw in self.config["location_kws"]:
             IMU_path = os.path.join(folder_path, kw + '.csv')
             imu = IMU(IMU_path)  # read interim IMU data
+            print("DATASET_IMU____:",type(imu))
             imu.acc_to_meter_per_square_sec()
             imu.gyro_to_rad()
-            # plot_accel_gyro(imu)
+            #plot_accel_gyro(imu)
             # show()
             imus[kw] = imu
 

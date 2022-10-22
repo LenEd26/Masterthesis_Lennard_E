@@ -27,6 +27,7 @@ class GaitParameters:
             assert len(self.gait_events[side]["times"][stance_begin]) == len(
                 self.gait_events[side]["times"][stance_end]
             )
+            print("gait events_:" , self.gait_events)
 
             # if the recording doesn't start with start event
             while (
@@ -130,7 +131,8 @@ class GaitParameters:
             for parameter, sign, threshold in [
                 ('angle_change', 'larger_than', 0.2),
                 ('stride_length', 'smaller_than', 0.2),
-                ('stride_time', 'larger_than', 2),
+                ('stride_time', 'larger_than', 5),
+                #('stride_time', 'larger_than', 2),
                 ('stance_ratio', 'smaller_than', 0.5),
             ]:
                 # check for angle change

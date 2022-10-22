@@ -5,7 +5,7 @@ from src.LFRF_parameters import pipeline_playground
 
 ### PARAMS START ###
 
-dataset = 'data_sim_cbf'
+dataset = 'data_stanford'
 if dataset == "data_sim":
     stroke_list = [
         "S1",
@@ -31,11 +31,18 @@ elif dataset == "data_sim_cbf":
         "stark"   
     ]
 
+elif dataset == "data_stanford":
+    stroke_list = ["S1"  
+                 ]
+    
+    runs = [
+        "NLA"  ]
 
 with open(os.path.join(os.path.dirname(__file__), '..', 'path.json')) as f:
     paths = json.loads(f.read())
 data_base_path = paths[dataset]
 ## PARAMS END ###
 
+print("basepath_____",data_base_path)
 ### Execute the Gait Analysis Pipeline ###
 pipeline_playground.execute(stroke_list, runs, dataset, data_base_path)

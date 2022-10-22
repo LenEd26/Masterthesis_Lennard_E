@@ -18,18 +18,20 @@ df_S1_EF = pd.read_csv("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/data_stan
 df_S1_F3 = pd.read_csv("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/data_stanford/no_use/F3.csv", delimiter="\t")
 
 ####### add dummy timestamp column
-df_S1_E6["SampleTimeFine"] = range(0,len(df_S1_E6))
+df_S1_E6["SampleTimeFine"] = (range(0,len(df_S1_E6)))
+df_S1_E6["SampleTimeFine"] = 0.01*df_S1_E6["SampleTimeFine"]
 #print(df_S1_E6["SampleTimeFine"])
-df_S1_E6.to_csv("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/data_stanford/raw/S1/dummy_ts/LF.csv")
-df_S1_EF["SampleTimeFine"] = range(0,len(df_S1_EF))
+df_S1_E6.to_csv("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/data_stanford/raw/S1/NLA/LF.csv")
+df_S1_EF["SampleTimeFine"] = (range(0,len(df_S1_EF)))
+df_S1_EF["SampleTimeFine"] = 0.01*df_S1_EF["SampleTimeFine"]
 #print(df_S1_EF["SampleTimeFine"])
-df_S1_EF.to_csv("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/data_stanford/raw/S1/dummy_ts/RF.csv")
+df_S1_EF.to_csv("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/data_stanford/raw/S1/NLA/RF.csv")
 
 
 def raw_stanford_plt(df, name):
 
     print(df.head())
-    df = df[['Acc_X', 'Acc_Y', 'Acc_Z','Gyr_X', 'Gyr_Y', 'Gyr_Z', ]]
+    df = df[['Acc_X', 'Acc_Y', 'Acc_Z','Gyr_X', 'Gyr_Y', 'Gyr_Z' ]]
     print(df.describe())
     # sub_list = ["S1"]
         

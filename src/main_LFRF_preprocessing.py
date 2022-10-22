@@ -1,5 +1,6 @@
 import json
 import os
+from pickle import FALSE
 import pandas as pd
 import matplotlib
 matplotlib.use("WebAgg")
@@ -9,7 +10,7 @@ from src.LFRF_parameters.preprocessing.get_imu_gyro_thresholds import AccPlot, G
 from data_reader.DataLoader import DataLoader
 
 #### PARAMS START ####
-dataset = "data_stanford"
+dataset = "data_sim"
 load_raw = True  # load (and plot) raw IMU data into interim data
 get_stance_threshold = False  # determine stance threshold
 get_initial_contact = False # determine IMU initial contact
@@ -96,13 +97,12 @@ elif dataset == "data_sim_cbf":
     ]
 
 elif dataset == "data_stanford":
-    sub_list = ["S1",
-                 #"S2"   
+    sub_list = ["S1"   
                  ]
     
     runs = [
-        "dummy_ts",
-        #"NLA"   
+        #"dummy_ts",
+        "NLA"   
     ]
 
 
@@ -117,9 +117,9 @@ if load_raw:
     for i in range(len(sub_list)):
         for j in range(len(runs)):
             from_interim = False
-            data_path = os.path.join(sub_list[i], runs[j])#, "imu")  # folder containing the raw IMU data
+            data_path = os.path.join(sub_list[i], runs[j], "imu")  # folder containing the raw IMU data
             read_folder_path = os.path.join(raw_base_path, data_path)
-            save_folder_path = os.path.join(interim_base_path, data_path, "imu")
+            save_folder_path = os.path.join(interim_base_path, data_path)
 
             # select IMU locations to load
             IMU_loc_list = ['LF', 'RF']
@@ -129,7 +129,8 @@ if load_raw:
                 else:  # load raw data (& save file to the interim folder)
                     data_loader = DataLoader(read_folder_path, loc, sub_list, runs)
                     #df_loc = data_loader.load_kiel_data()
-                    df_loc = data_loader.load_xsens_data()
+                    #df_loc = data_loader.load_xsens_data()
+                    df_loc = data_loader.load_stanford_data()
                     # df_loc = data_loader.load_GaitUp_data()
                     # df_loc = data_loader.cut_data(500, 10500)  # (if necessary: segment data)
                     data_loader.save_data(save_folder_path)  # save re-formatted data into /interim folder
@@ -139,7 +140,7 @@ if load_raw:
                     plot_acc_gyr(df_loc, ['AccX', 'AccY', 'AccZ'], 'raw_Acc_' + loc, save_folder_path)
                     plot_acc_gyr(df_loc, ['GyrX', 'GyrY', 'GyrZ'], 'raw_Gyr_' + loc, save_folder_path)
 
-            plt.show()
+            #plt.show()
 
 
 #### get gyro stance threshold ####

@@ -112,9 +112,9 @@ class TuncaTrajectoryEstimator(AbstractTrajectoryEstimator):
             fig = plt.figure()
             ax = plt.axes(projection="3d")
             for foot in [("left", "LF"), ("right", "RF")]:
-                ax.plot3D(trajectories[foot[0]]["position_x"],  #[100:2000],
-                          trajectories[foot[0]]["position_y"],  #[100:2000],
-                          trajectories[foot[0]]["position_z"],  #[100:2000],
+                ax.plot3D(trajectories[foot[0]]["position_x"][100:2000],
+                          trajectories[foot[0]]["position_y"][100:2000],
+                          trajectories[foot[0]]["position_z"][100:2000],
                           label=foot[1])
             ax.set_xlabel("x")
             ax.set_ylabel("y")

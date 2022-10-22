@@ -42,7 +42,7 @@ def execute(sub_list, runs, dataset, data_base_path):
                             'subjects': sub_list,
         }
 
-    elif dataset == "data_sim":
+    elif dataset == "data_sim" or dataset == "data_sim_cbf":
         pipeline_config = {
                             # @name: the name should be unique for each pipeline configuration.
                             # it is used to identify interim data and reuse it in the next run
@@ -55,23 +55,23 @@ def execute(sub_list, runs, dataset, data_base_path):
                             'location_kws': ['LF', 'RF'],
                             'data_loader': PhysilogDataLoader,
                             'trajectory_estimator': TuncaTrajectoryEstimator,
-                            'sampling_rate': 120, #?
+                            'sampling_rate': 120, 
                             'gait_event_detector': TuncaEventDetector,
                             'prominence_search_threshold': 0.7,
                             'prominence_ic': 0.01,
                             'prominence_fo': 0.01,
                             "reference_loader": OptogaitReferenceLoader,
-                            "reference_name": "OptoGait", ##?
+                            "reference_name": "OptoGait", 
                             'dataset': dataset,
                             'runs': runs,
                             'subjects': sub_list,
         }
 
-    elif dataset == "data_sim_cbf":
+    elif dataset == "data_stanford":
         pipeline_config = {
                         # @name: the name should be unique for each pipeline configuration.
                         # it is used to identify interim data and reuse it in the next run
-                        "name": "data_sim",
+                        "name": "data_stanford",
                         'raw_base_path': os.path.join(data_base_path, "raw"),
                         'interim_base_path': os.path.join(data_base_path, "interim"),
                         'processed_base_path': os.path.join(data_base_path, "processed"),
@@ -80,9 +80,9 @@ def execute(sub_list, runs, dataset, data_base_path):
                         'location_kws': ['LF', 'RF'],
                         'data_loader': PhysilogDataLoader,
                         'trajectory_estimator': TuncaTrajectoryEstimator,
-                        'sampling_rate': 120, #?
+                        'sampling_rate': 100,
                         'gait_event_detector': TuncaEventDetector,
-                        'prominence_search_threshold': 0.7,
+                        'prominence_search_threshold': 0.3,
                         'prominence_ic': 0.01,
                         'prominence_fo': 0.01,
                         "reference_loader": OptogaitReferenceLoader,
@@ -101,7 +101,7 @@ def execute(sub_list, runs, dataset, data_base_path):
                             'interim_base_path': os.path.join(data_base_path, "interim"),
                             'processed_base_path': os.path.join(data_base_path, "processed"),
                             'overwrite': False,  # overwrite the trajectory estimations
-                            'show_figures': 0,  # show figures from intermediate steps. 2: figures are saved; 1: figures are shown; 0: no figures plotted
+                            'show_figures': 1,  # show figures from intermediate steps. 2: figures are saved; 1: figures are shown; 0: no figures plotted
                             'location_kws': ['LF', 'RF'],
                             'data_loader': PhysilogDataLoader,
                             'trajectory_estimator': TuncaTrajectoryEstimator,
@@ -144,10 +144,13 @@ def execute(sub_list, runs, dataset, data_base_path):
 
     # create the pipeline
     pipeline = Pipeline(pipeline_config)
+    print("pipeine______:", pipeline)
 
     # list of tuples (run number, subject number)
     everything = [(x, y) for x in range(0, len(pipeline_config["subjects"])) for y in range(0, len(pipeline_config["runs"]))]
     # analyze = [(1, 0), (1, 1), (1, 2)]
+
+    print("everything___:",everything)
 
     analyze = everything
     pipeline.execute(analyze)

@@ -2,6 +2,8 @@ from turtle import color
 import numpy as np
 from scipy.signal import find_peaks, peak_prominences
 import matplotlib.pyplot as plt
+import os
+
 
 def gyro_threshold_stance(
     imu, stance_magnitude_threshold=0.5, stance_count_threshold=8
@@ -81,8 +83,10 @@ def tunca_gait_events(imu, stance_magnitude_threshold, stance_count_threshold, p
     G = np.transpose(gyro)[np.argmax(gyro.std(axis=0))]
 
     # The signal needs to be inverted to fit the peak detection algorithm.
-    # (Flip ot not flip depends on sensor orientation on the shoe.)
-    G = -G
+    # (Flip or not flip depends on sensor orientation on the shoe.)
+    
+    # if os.path.basename(save_fig_directory) == "RF":
+    #     G = -G
 
     # calculate tilt
     dt = np.diff(t)
