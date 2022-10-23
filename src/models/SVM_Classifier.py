@@ -52,10 +52,11 @@ print(y)
 X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.8, random_state = 1)
 
 def f_importances(coef, names):
-    imp = coef
+    imp = abs(coef)
     print(imp)
     imp,names = zip(*sorted(zip(imp,names)))
-    plt.figure(figsize=(20,10))
+    plt.figure(figsize=(20,15))
+    plt.title("SVC feature importance obtained from coefficients", size =20)
     plt.barh(range(len(names)), imp, align='center')
     plt.yticks(range(len(names)), names)
     plt.show()
@@ -64,43 +65,34 @@ def f_importances(coef, names):
 # poly, rbf, linear
 feature_names = data_X.columns.tolist()  #data_X.columns.values.tolist()
 print(feature_names)
-svclassifier = SVC(kernel='rbf')
+
+svclassifier = SVC(kernel='linear', C=100.)
 svclassifier.fit(X_train, np.ravel(y_train, order="C"))
-#f_importances(svclassifier.coef_[0], feature_names)
+f_importances(svclassifier.coef_[0], feature_names)
 
 y_pred = svclassifier.predict(X_test)
 print(confusion_matrix(y_test,y_pred))
 print(classification_report(y_test,y_pred))
 
-
-
 # define the model
 model_log = LogisticRegression()
 # fit the model
 model_log.fit(X, y)
+# score the model
+print(f'model score on training data: {model_log.score(X_train, y_train)}')
+print(f'model score on testing data: {model_log.score(X_test, y_test)}') 
 # get importance
-importance = model_log.coef_[0]
+importances = pd.DataFrame(data={'Attribute': X_train.columns,
+    'Importance': abs(model_log.coef_[0])})
+importances = importances.sort_values(by='Importance', ascending=True)
 # summarize feature importance
-for i,v in enumerate(importance):
-	print('Feature: %0d, Score: %.5f' % (i,v))
-# plot feature importance
 plt.figure(figsize=(20,15))
-plt.bar([x for x in range(len(importance))], importance)
-plt.xticks(range(len(feature_names)), feature_names, rotation = 90, horizontalalignment = 'right') #sort the labels!
+#plt.bar(x=importances['Attribute'], height=importances['Importance'], color='#087E8B')
+plt.barh(importances['Attribute'], importances['Importance'])#, align='center')
+plt.title('LogReg Feature importances obtained from coefficients', size=20)
+plt.yticks(range(len(importances['Attribute'])), importances['Attribute'])
+#plt.xticks(rotation='vertical')
 plt.show()
-
-
-# SVM_Model = SVC(gamma="auto")
-# SVM_Model.fit(X,y)
-
-# print(f"Accuracy - : {SVM_Model.score(X,y):.3f}")
-
-
-############### feature Importance
-
-
-
-
 
 
 

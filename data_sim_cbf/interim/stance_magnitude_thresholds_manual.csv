@@ -1,6 +1,6 @@
 subject,run,stance_magnitude_threshold_left,stance_magnitude_threshold_right,stance_count_threshold_left,stance_count_threshold_right
-S1,leicht2,0.5,0.5,12,14
-S1,leicht,0.7,0.5,10,9
-S1,stark,0.5,0.6,21,22
-S1,leicht3,0.6,0.7,14,15
-S1,normal,0.9,0.8,6,9
+S1,leicht2,0.8,0.7,9,13
+S1,leicht,1.0,0.8,8,7
+S1,stark,0.7,0.3,14,10
+S1,leicht3,0.7,1.0,12,12
+S1,normal,1.2,1.2,8,8

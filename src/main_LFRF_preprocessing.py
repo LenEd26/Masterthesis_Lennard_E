@@ -10,9 +10,9 @@ from src.LFRF_parameters.preprocessing.get_imu_gyro_thresholds import AccPlot, G
 from data_reader.DataLoader import DataLoader
 
 #### PARAMS START ####
-dataset = "data_sim"
+dataset = "data_sim_cbf"
 load_raw = True  # load (and plot) raw IMU data into interim data
-get_stance_threshold = False  # determine stance threshold
+get_stance_threshold = True  # determine stance threshold
 get_initial_contact = False # determine IMU initial contact
 
 if dataset == "data_kiel":
@@ -130,7 +130,8 @@ if load_raw:
                     data_loader = DataLoader(read_folder_path, loc, sub_list, runs)
                     #df_loc = data_loader.load_kiel_data()
                     #df_loc = data_loader.load_xsens_data()
-                    df_loc = data_loader.load_stanford_data()
+                    df_loc = data_loader.load_sim_data()
+                    #df_loc = data_loader.load_stanford_data()
                     # df_loc = data_loader.load_GaitUp_data()
                     # df_loc = data_loader.cut_data(500, 10500)  # (if necessary: segment data)
                     data_loader.save_data(save_folder_path)  # save re-formatted data into /interim folder

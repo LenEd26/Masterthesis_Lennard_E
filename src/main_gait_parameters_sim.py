@@ -5,7 +5,7 @@ from src.LFRF_parameters import pipeline_playground
 
 ### PARAMS START ###
 
-dataset = 'data_stanford'
+dataset = 'data_sim_cbf'
 if dataset == "data_sim":
     stroke_list = [
         "S1",

@@ -139,7 +139,46 @@ class DataLoader:
         self.data_df['AccZ'] = self.data_df['AccZ'] / 9.8
         #self.data_df["ID"] =  self.data_df[self.sub_list[0]]
         #self.data_df["Score"] =  self.data_df[self.score[0]]
-        return self.data_df        
+        return self.data_df 
+
+
+    def load_sim_data(self):
+        # find file containing key word for left or right foot
+        no_file = True
+        for file in os.listdir(self.data_path):
+            if fnmatch.fnmatch(file, '*.csv') and (self.location_kw in file):
+                file_name = file
+                print(file_name)
+                no_file = False
+
+        if no_file:
+            print('No file for ' + self.location_kw + ' found.')
+            return
+
+        # extract data columns
+        raw_data_df = pd.read_csv(os.path.join(self.data_path, file_name) , low_memory=False, skiprows=7, on_bad_lines='skip')#
+        print(raw_data_df.describe())
+        self.data_df = raw_data_df.filter(['SampleTimeFine', 'Gyr_X', 'Gyr_Y', 'Gyr_Z', 'Acc_X', 'Acc_Y', 'Acc_Z'], axis=1)
+        self.data_df = self.data_df.rename(columns={'SampleTimeFine': 'timestamp',
+                                'Acc_X': 'AccX',
+                                'Acc_Y': 'AccY',
+                                'Acc_Z': 'AccZ',
+                                'Gyr_X': 'GyrX',
+                                'Gyr_Y': 'GyrY',
+                                'Gyr_Z': 'GyrZ'})
+
+        self.data_df = self.data_df.apply(pd.to_numeric, errors='coerce')  # convert all columns of DataFrame to numbers
+        self.data_df.dropna(inplace=True)  # in case there are non-numeric values being converted to NaN
+        print(self.data_df.describe())
+        self.data_df["timestamp"] = self.data_df["timestamp"] * 1e-6  # convert time from millisecond to second
+        self.data_df["GyrX"] = self.data_df["GyrX"] #* (-1)  # invert gyro Y axis for gait event detection
+        self.data_df['AccX'] = self.data_df['AccX'] / 9.8 #* (-1)
+        self.data_df['AccY'] = self.data_df['AccY'] / 9.8
+        self.data_df['AccZ'] = self.data_df['AccZ'] / 9.8
+        #self.data_df["ID"] =  self.data_df[self.sub_list[0]]
+        #self.data_df["Score"] =  self.data_df[self.score[0]]
+        return self.data_df
+
 
     def load_EXLs3_data(self):
         folder_path = self.data_path
