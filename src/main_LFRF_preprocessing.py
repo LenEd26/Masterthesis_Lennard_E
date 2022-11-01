@@ -11,7 +11,7 @@ from data_reader.DataLoader import DataLoader
 
 #### PARAMS START ####
 dataset = "data_sim_cbf"
-load_raw = True  # load (and plot) raw IMU data into interim data
+load_raw = False  # load (and plot) raw IMU data into interim data
 get_stance_threshold = True  # determine stance threshold
 get_initial_contact = False # determine IMU initial contact
 
@@ -89,11 +89,11 @@ elif dataset == "data_sim_cbf":
     sub_list = ["S1"]
     
     runs = [
-        "leicht", 
-        "leicht2",
-        "leicht3",
-        "normal",
-        "stark"   
+        #"leicht", 
+        # "leicht2",
+        # "leicht3",
+        # "normal",
+        #"stark"   
     ]
 
 elif dataset == "data_stanford":
@@ -149,7 +149,7 @@ if get_stance_threshold:
     overwrite = False  # if False: append to existing file 
 
     # if no file, create one. Otherwise append to the existing file
-    if not os.path.isfile(os.path.join(interim_base_path, 'stance_magnitude_thresholds.csv')) or overwrite:
+    if not os.path.isfile(os.path.join(interim_base_path, 'stance_magnitude_thresholds_manual.csv')) or overwrite:
         pd.DataFrame(
             columns=[
                 "subject",
@@ -160,7 +160,7 @@ if get_stance_threshold:
                 "stance_count_threshold_right",
             ],
         ).to_csv(
-            os.path.join(interim_base_path, "stance_magnitude_thresholds.csv"), index=False
+            os.path.join(interim_base_path, "stance_magnitude_thresholds_manual.csv"), index=False
         )
 
     for subject_id, subject in enumerate(sub_list):
@@ -195,10 +195,10 @@ if get_stance_threshold:
 
 
 #### get IMU initial contact ####
-overwrite = False  # if False: append to existing file 
+overwrite = True  # if False: append to existing file 
 if get_initial_contact:
     # if no file, create one. Otherwise append to the existing file
-    if not os.path.isfile(os.path.join(interim_base_path, 'imu_initial_contact.csv')) or overwrite:
+    if not os.path.isfile(os.path.join(interim_base_path, 'imu_initial_contact_manual.csv')) or overwrite:
         pd.DataFrame(
             columns=[
                 "subject",
@@ -207,7 +207,7 @@ if get_initial_contact:
                 "imu_initial_contact_right"
             ],
         ).to_csv(
-            os.path.join(interim_base_path, "imu_initial_contact.csv"), index=False
+            os.path.join(interim_base_path, "imu_initial_contact_manual.csv"), index=False
         )
 
     for subject_id, subject in enumerate(sub_list):

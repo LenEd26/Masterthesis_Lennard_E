@@ -85,6 +85,7 @@ def tunca_gait_events(imu, stance_magnitude_threshold, stance_count_threshold, p
     # The signal needs to be inverted to fit the peak detection algorithm.
     # (Flip or not flip depends on sensor orientation on the shoe.)
     
+    # print("Save_fig_dir", save_fig_directory)
     # if os.path.basename(save_fig_directory) == "RF":
     #     G = -G
 

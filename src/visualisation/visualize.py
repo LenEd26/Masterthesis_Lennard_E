@@ -12,12 +12,8 @@ import os
 import json
 import glob 
 
-# df_sim_right = pd.read_csv("data_sim/aggregated_data/all_right_parameters.csv")
-# df_sim_left = pd.read_csv("data_sim/aggregated_data/all_left_parameters.csv")
-# data_kiel_right = pd.read_csv("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/data_kiel/aggregated_data/all_right_parameters.csv")
-# data_kiel_left = pd.read_csv("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/data_kiel/aggregated_data/all_left_parameters.csv")
 
-dataset = "data_sim"
+dataset = "data_stanford"
 # Define filepath
 
 with open(os.path.join(os.getcwd(), 'path.json')) as f:
@@ -26,6 +22,7 @@ final_datapath= os.path.join(paths[dataset], "final_data")
 # Load Excel file using Pandas
 #file = pd.ExcelFile(final_datapath)
 csv_file = glob.glob(os.path.join(final_datapath, "*.csv"))
+
 
 
 def df_check_outlier_column(df):
@@ -88,50 +85,49 @@ def exclude_outlier(df):
     return df
 
 
-def plot_check_df(df, subject, color_dict, side, feature, filter_for_sub):
-    if side == "left":
-        #col_list = [col for col in df.columns if col.endswith('_left')]
-        df_col = df.loc[:,df.columns.str.endswith(side)]
-        df_sub = df.loc[:, ["subject", "severity"]]
-        df = pd.concat([df_col, df_sub], axis=1)
-    elif side == "right":
-        col_list = [col for col in df.columns if col.endswith('_right')]
-        df = df[col_list, "subject", "severity"]
-    elif side == "SI": 
-        col_list = [col for col in df.columns if col.endswith('_SI')]
-        df = df[col_list, "subject", "severity"]
+def plot_check_df(df, subject, color_dict, column):
 
-    if filter_for_sub == True:
-        df = df[df["subject"] == subject]
-
-    plt.figure(figsize = (15,8))
-    sns.heatmap(df.corr(), xticklabels = 1, yticklabels = 1)
+    # plt.figure(figsize = (15,8))
+    # sns.heatmap(df.corr(), xticklabels = 1, yticklabels = 1)
+    # plt.show()
+    # plt.close()
+    sns.boxplot(x= 'subject', y= column, data=df).set(title= "stride length of the different stroke categories " + subject)
     plt.show()
     plt.close()
-    sns.boxplot(x= 'subject', y= feature + side, data=df).set(title= "stride length of the different stroke categories " + subject)
-    #plt.show()
-    plt.close()
-    sns.boxplot(x= 'severity', y= feature + side, data=df, palette= color_dict, order = color_dict).set(title= "stride length of the different stroke categories " + subject)
-    #plt.show()
-    plt.savefig("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/figures/"+ subject + feature +".png")  
-    plt.close()
-    sns.pairplot(df)
+    sns.boxplot(x= 'severity', y= column, data=df, palette= color_dict, order = color_dict).set(title= "stride length of the different stroke categories " + subject)
     plt.show()
+    plt.savefig("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/figures/"+ subject + column +".png")  
+    plt.close()
+    #plt.close()
+    # sns.pairplot(df)
+    # plt.show()
 
 
-def subject_boxplots(df, name, subject, color_dict):
-    sns.boxplot(x= df.loc[df["subject"] == subject, 'method'], y='stride_length', data=df, palette= color_dict, order = color_dict).set(title= "stride length of the different stroke categories " + name)
+# def subject_boxplots(df, name, subject, color_dict):
+#     sns.boxplot(x= df.loc[df["subject"] == subject, 'severity'], y='stride_length', data=df, palette= color_dict, order = color_dict).set(title= "stride length of the different stroke categories " + name)
+#     plt.savefig("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/figures/"+ subject + name +"_stride_length_.png") 
+#     plt.close() 
+    
+#     sns.boxplot(x= df.loc[df["subject"] == subject, 'severity'], y='clearance',data=df, palette= color_dict, order = color_dict).set(title= "clearance of the different stroke categories " + name)
+#     plt.savefig("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/figures/"+ subject + name +"_clearance_.png") 
+#     plt.close()
+    
+#     sns.boxplot( x= df.loc[df["subject"] == subject, 'severity'], y='stride_time',data=df, palette= color_dict, order = color_dict).set(title= "stride time of the different stroke categories " + name)
+#     plt.savefig("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/figures/"+ subject + name +"_stride_time_.png") 
+#     plt.close()
+
+def subject_boxplots(df, name, subject):
+    sns.boxplot(x= df.loc[df["subject"] == subject, 'severity'], y='stride_length_avg', data=df).set(title= "stride length of the different stroke categories " + name)
     plt.savefig("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/figures/"+ subject + name +"_stride_length_.png") 
     plt.close() 
     
-    sns.boxplot(x= df.loc[df["subject"] == subject, 'method'], y='clearance',data=df, palette= color_dict, order = color_dict).set(title= "clearance of the different stroke categories " + name)
+    sns.boxplot(x= df.loc[df["subject"] == subject, 'severity'], y='clearance',data=df).set(title= "clearance of the different stroke categories " + name)
     plt.savefig("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/figures/"+ subject + name +"_clearance_.png") 
     plt.close()
     
-    sns.boxplot( x= df.loc[df["subject"] == subject, 'method'], y='stride_time',data=df, palette= color_dict, order = color_dict).set(title= "stride time of the different stroke categories " + name)
+    sns.boxplot( x= df.loc[df["subject"] == subject, 'severity'], y='stride_time_avg',data=df).set(title= "stride time of the different stroke categories " + name)
     plt.savefig("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/figures/"+ subject + name +"_stride_time_.png") 
     plt.close()
-
 def plot_check_kiel(df, name, color_dict_kiel):
     df_corr = df.iloc[:,:-6]
     print("df_corr_", df_corr.columns.tolist())
@@ -153,39 +149,54 @@ def plot_check_kiel(df, name, color_dict_kiel):
     sns.boxplot( x= "subject", y='stride_time',data = df, palette= color_dict_kiel).set(title = "stride time of the different stroke categories " + name)
     plt.savefig("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/figures/"+ name +"_stride_time_.png") 
     plt.close()
-# fig, ax = plt.subplots(figsize = (18,10))
-# ax.scatter(df_sim_right['method'], df_sim_right['stance_time'])
 
-# # x-axis label
-# ax.set_xlabel('methods used/scores')
+def plot_check_stanford(df, subject, color_dict, column):
 
-# # y-axis label
-# ax.set_ylabel('stance time')
-# plt.show()
+    # plt.figure(figsize = (15,8))
+    # sns.heatmap(df.corr(), xticklabels = 1, yticklabels = 1)
+    # plt.show()
+    # plt.close()
+    sns.boxplot(x= 'subject', y= column, data=df).set(title= "stride length of the different stroke categories " + subject)
+    plt.show()
+    plt.savefig("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/figures/"+ subject + column +".png")  
+    plt.close()
+    #plt.close()
+    # sns.pairplot(df)
+    # plt.show()
+
 
 ########## MAIN #########
 # Data Sim --> CHECK WITH GIVEN OUTLIER AGAIN!
 # df_sim_right = exclude_outlier(df_sim_right)
 # df_sim_left = exclude_outlier(df_sim_left)
 # print(df_sim_right.describe())
-side ="_left" #"_right"
-feature = "stride_length_avg"
+# side ="_left" #"_right"
+# feature = "stride_length_avg"
 subject = "S1"
 df_list = []
+color_dict_sim = {"NLA":"C0"}
 
 print(csv_file)
 for path in csv_file:
     df_s = pd.read_csv(path)
     df_list.append(df_s)
-data = pd.concat(df_list, axis = 0, ignore_index= True)    
+data = pd.concat(df_list, axis = 0, ignore_index= True)
+
+data_columns = list(data.columns.values)
+data_columns.remove("subject")
+data_columns.remove("severity")
+print(data_columns)   
 print("appending data:", data.describe())
 
+for i in data_columns:
+    column = i
+    plot_check_stanford(data, subject, color_dict_sim, column)
+#color_dict_sim = {"regular":"C0", "1P":"C1", "2P":"C2", "3P":"C3"}
 
 
-color_dict_sim = {"regular":"C0", "1P":"C1", "2P":"C2", "3P":"C3"}
-plot_check_df(data, subject, color_dict_sim, side, feature, filter_for_sub=True)
+#plot_check_df(data, subject, color_dict_sim, side, feature, filter_for_sub=False)
 #plot_check_df(df_sim_left, "sim_left", color_dict_sim)
-#subject_boxplots(data, "_sim_left", "S1", color_dict_sim)
+#subject_boxplots(data, side, subject)
 #subject_boxplots(df_sim_left, "_sim_left", "S2", color_dict_sim)
 
 ## Data Kiel

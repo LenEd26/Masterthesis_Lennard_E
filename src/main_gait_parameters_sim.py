@@ -24,10 +24,10 @@ elif dataset == "data_sim_cbf":
     stroke_list = ["S1"]
     
     runs = [
-        "leicht", 
-        "leicht2",
-        "leicht3",
-        "normal",
+        #"leicht", 
+        #"leicht2",
+        #"leicht3",
+        #"normal",
         "stark"   
     ]
 

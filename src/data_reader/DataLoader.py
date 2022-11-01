@@ -118,7 +118,7 @@ class DataLoader:
             return
 
         # extract data columns
-        raw_data_df = pd.read_csv(os.path.join(self.data_path, file_name) , low_memory=False)# skiprows=7, on_bad_lines='skip')#
+        raw_data_df = pd.read_csv(os.path.join(self.data_path, file_name) , low_memory=False, skiprows=7, on_bad_lines='skip')#
         print(raw_data_df.describe())
         self.data_df = raw_data_df.filter(['SampleTimeFine', 'Gyr_X', 'Gyr_Y', 'Gyr_Z', 'Acc_X', 'Acc_Y', 'Acc_Z'], axis=1)
         self.data_df = self.data_df.rename(columns={'SampleTimeFine': 'timestamp',
@@ -163,7 +163,7 @@ class DataLoader:
                                 'Acc_X': 'AccX',
                                 'Acc_Y': 'AccY',
                                 'Acc_Z': 'AccZ',
-                                'Gyr_X': 'GyrX',
+                                'Gyr_X': 'GyrX',   ###Swapped!
                                 'Gyr_Y': 'GyrY',
                                 'Gyr_Z': 'GyrZ'})
 
@@ -473,7 +473,7 @@ class DataLoader:
             os.makedirs(save_path)
 
         try:
-            self.data_df.to_csv(save_path + '/' + self.location_kw + '.csv', mode = "w+")
+            self.data_df.to_csv(save_path + '/' + self.location_kw + '.csv', mode = "w")
         except AttributeError:
             print("Could not save to csv: Data not loaded yet.")
         else:
