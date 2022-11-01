@@ -1,9 +1,0 @@
-subject,run,imu_initial_contact_left,imu_initial_contact_right
-S1,1P,0,0
-S1,2P,0,0
-S1,regular,0,0
-S1,3P,0,0
-S2,3P,0,0
-S2,2P,0,0
-S2,1P,0,0
-S2,regular,0,0

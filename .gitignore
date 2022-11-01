@@ -1,5 +1,15 @@
 # Project folder
+/data*/
 data_kiel/
+data_sim/
+data_stanford/
+data_sim_cbf/
+visualization/
+data_charite/
+figures/
+
+
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
