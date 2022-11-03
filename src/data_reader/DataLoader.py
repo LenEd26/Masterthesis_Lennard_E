@@ -163,7 +163,7 @@ class DataLoader:
                                 'Acc_X': 'AccX',
                                 'Acc_Y': 'AccY',
                                 'Acc_Z': 'AccZ',
-                                'Gyr_X': 'GyrX',   ###Swapped!
+                                'Gyr_X': 'GyrX',   #!Swapped for leicht2 sim_cbf
                                 'Gyr_Y': 'GyrY',
                                 'Gyr_Z': 'GyrZ'})
 

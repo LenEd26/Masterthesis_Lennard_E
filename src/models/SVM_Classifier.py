@@ -7,6 +7,8 @@ import numpy as np
 from pandas import read_csv
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
+from sklearn.metrics import f1_score
+from sklearn.model_selection import cross_val_score
 from sklearn.svm import SVC
 from sklearn import svm
 plt.matplotlib.use("WebAgg")
@@ -17,9 +19,7 @@ from sklearn.linear_model import LogisticRegression
 
 
 # Step2 Load dataset
-dataset = "data_sim"
-# data_sim_LF = read_csv("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/data_sim/aggregated_data/all_left_parameters.csv")
-# data_sim_RF = read_csv("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/data_sim/aggregated_data/all_right_parameters.csv")
+dataset = "data_sim_cbf"
 
 with open(os.path.join(os.getcwd(), 'path.json')) as f:
     paths = json.loads(f.read())
@@ -42,21 +42,22 @@ data = data.dropna()
 
 data_X = data.loc[:, ~data.columns.isin(["severity", "subject"])] ####### define X and Y from the overal Dataset!
 data_y = data.loc[:, data.columns.isin(["severity"])]#, "subject"])] 
-#data_y = data.loc[:,"severity"]
+
 X = data_X
 #print(X)
 y = data_y
-print(y)
+print("Y__", y)
 
 # Step3 Split data in training and testing subsets
 X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.8, random_state = 1)
+''' For further evaluation: https://scikit-learn.org/stable/modules/cross_validation.html '''
 
 def f_importances(coef, names):
     imp = abs(coef)
     print(imp)
     imp,names = zip(*sorted(zip(imp,names)))
     plt.figure(figsize=(20,15))
-    plt.title("SVC feature importance obtained from coefficients", size =20)
+    plt.title("SVC feature importance obtained from coefficients"+ "_" + dataset, size =20)
     plt.barh(range(len(names)), imp, align='center')
     plt.yticks(range(len(names)), names)
     plt.show()
@@ -64,16 +65,43 @@ def f_importances(coef, names):
 # Step 4 Classifiert Training using SVM
 # poly, rbf, linear
 feature_names = data_X.columns.tolist()  #data_X.columns.values.tolist()
-print(feature_names)
+print("Feature_Names",feature_names)
 
-svclassifier = SVC(kernel='linear', C=100.)
-svclassifier.fit(X_train, np.ravel(y_train, order="C"))
-f_importances(svclassifier.coef_[0], feature_names)
+##### linear SVM clasifier
+svclassifier_lin = SVC(kernel='linear', C=1, random_state= 42)
+# fit the model
+svclassifier_lin.fit(X_train, np.ravel(y_train, order="C"))
+# importance plot
+f_importances(svclassifier_lin.coef_[0], feature_names)
+#efficiency of the models
+lin_pred = svclassifier_lin.predict(X_test)
+print(confusion_matrix(y_test,lin_pred))
+print(classification_report(y_test,lin_pred))
+### score the model 
+lin_cross_scores = cross_val_score(svclassifier_lin, X, y, cv=5)
+lin_accuracy = accuracy_score(y_test, lin_pred)
+lin_f1 = f1_score(y_test, lin_pred, average='weighted')
+print(lin_cross_scores, "%0.2f accuracy with a standard deviation of %0.2f" % (lin_cross_scores.mean(), lin_cross_scores.std()))
+print('Accuracy (Linear Kernel): ', "%.2f" % (lin_accuracy*100))
+print('F1 (Linear Kernel): ', "%.2f" % (lin_f1*100))
 
-y_pred = svclassifier.predict(X_test)
-print(confusion_matrix(y_test,y_pred))
-print(classification_report(y_test,y_pred))
+##### ploynomial SVM clasifier
+svclassifier_poly = SVC(kernel='poly', C=1)
+# fit the model 
+svclassifier_poly.fit(X_train, np.ravel(y_train, order="C"))
+# importance plot
+'''rbf kernel implicitly transforms your features into a higher dimensional space of ' transformed features' and tries to separate 
+ linearly in that new space. As the transformation is implicit you do not know the link with your original features. '''
+# efficiency of the model
+poly_pred = svclassifier_poly.predict(X_test)
+### score model 
+poly_accuracy = accuracy_score(y_test, poly_pred)
+poly_f1 = f1_score(y_test, poly_pred, average='weighted')
+print('Accuracy (Polynomial Kernel): ', "%.2f" % (poly_accuracy*100))
+print('F1 (Polynomial Kernel): ', "%.2f" % (poly_f1*100))
 
+
+###### Logistic Regression
 # define the model
 model_log = LogisticRegression()
 # fit the model
@@ -89,7 +117,7 @@ importances = importances.sort_values(by='Importance', ascending=True)
 plt.figure(figsize=(20,15))
 #plt.bar(x=importances['Attribute'], height=importances['Importance'], color='#087E8B')
 plt.barh(importances['Attribute'], importances['Importance'])#, align='center')
-plt.title('LogReg Feature importances obtained from coefficients', size=20)
+plt.title('LogReg Feature importances obtained from coefficients' + "_" + dataset, size=20)
 plt.yticks(range(len(importances['Attribute'])), importances['Attribute'])
 #plt.xticks(rotation='vertical')
 plt.show()

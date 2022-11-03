@@ -13,7 +13,7 @@ import json
 import glob 
 
 
-dataset = "data_stanford"
+dataset = "data_sim_cbf"
 # Define filepath
 
 with open(os.path.join(os.getcwd(), 'path.json')) as f:
@@ -163,7 +163,16 @@ def plot_check_stanford(df, subject, color_dict, column):
     #plt.close()
     # sns.pairplot(df)
     # plt.show()
+def plot_check_sim_cbf(df, subject, color_dict, column):
 
+    # plt.figure(figsize = (15,8))
+    # sns.heatmap(df.corr(), xticklabels = 1, yticklabels = 1)
+    # plt.show()
+    # plt.close()
+    sns.boxplot(x= 'severity', y= column, data=df, palette= color_dict, order = color_dict).set(title= "stride length of the different stroke categories " + subject)
+    #plt.show()
+    plt.savefig("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/figures/"+ subject + "_cbf_" + column +".png")  
+    plt.close()
 
 ########## MAIN #########
 # Data Sim --> CHECK WITH GIVEN OUTLIER AGAIN!
@@ -174,7 +183,9 @@ def plot_check_stanford(df, subject, color_dict, column):
 # feature = "stride_length_avg"
 subject = "S1"
 df_list = []
-color_dict_sim = {"NLA":"C0"}
+#color_dict_sim = {"NLA":"C0"}
+#color_dict = {"regular":"C0", "1P":"C1", "2P":"C2", "3P":"C3"}
+color_dict = {"leicht":"C0", "leicht3":"C1", "normal":"C2", "stark":"C3"}
 
 print(csv_file)
 for path in csv_file:
@@ -190,7 +201,7 @@ print("appending data:", data.describe())
 
 for i in data_columns:
     column = i
-    plot_check_stanford(data, subject, color_dict_sim, column)
+    plot_check_sim_cbf(data, subject, color_dict, column)
 #color_dict_sim = {"regular":"C0", "1P":"C1", "2P":"C2", "3P":"C3"}
 
 

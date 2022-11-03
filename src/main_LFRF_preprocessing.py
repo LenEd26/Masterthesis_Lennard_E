@@ -11,8 +11,8 @@ from data_reader.DataLoader import DataLoader
 
 #### PARAMS START ####
 dataset = "data_sim_cbf"
-load_raw = False  # load (and plot) raw IMU data into interim data
-get_stance_threshold = True  # determine stance threshold
+load_raw = True  # load (and plot) raw IMU data into interim data
+get_stance_threshold = False  # determine stance threshold
 get_initial_contact = False # determine IMU initial contact
 
 if dataset == "data_kiel":
@@ -90,7 +90,7 @@ elif dataset == "data_sim_cbf":
     
     runs = [
         #"leicht", 
-        # "leicht2",
+        "leicht2",
         # "leicht3",
         # "normal",
         #"stark"   

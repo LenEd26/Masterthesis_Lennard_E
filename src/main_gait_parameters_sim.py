@@ -25,10 +25,10 @@ elif dataset == "data_sim_cbf":
     
     runs = [
         #"leicht", 
-        #"leicht2",
+        "leicht2",
         #"leicht3",
         #"normal",
-        "stark"   
+        #"stark"   
     ]
 
 elif dataset == "data_stanford":

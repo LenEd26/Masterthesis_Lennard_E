@@ -12,7 +12,7 @@ from src.features.symmetry_index import create_DF_SI
 
 
 ### previously set parameters depending on folder structure
-dataset = "data_sim_cbf"
+dataset = "data_kiel"
 win_size = 10
 win_slide = 2
 
@@ -51,7 +51,7 @@ for subject in subjects:
 # name -> list of subject names
 # method -> method of gait conduction (e.g. treadmill)
 
-### TODO Put in the CV features??
+
 
 def concat_df_LR():
     ''' function gatheres the file paths to all aggregated dataframes from left and right foot seperately
@@ -63,16 +63,16 @@ def concat_df_LR():
     files_right = sorted(glob.glob(aggregated_data_path + "right_foot_core_params_*" + "*.csv"))
     #print("files_right", files_right)
     for path_left, path_right in zip(files_left, files_right):
-        # print("path_left", path_left)
-        # print("path_right", path_right)
+        #print("path_left", path_left)
+        #print("path_right", path_right)
         df_left = pd.read_csv(path_left)
-        # print("df_left:", df_left.describe)
-        # print("left columns__", df_left. columns)
+        #print("df_left:", df_left.describe)
+        #print("left columns__", df_left. columns)
         df_right = pd.read_csv(path_right)
-        # print("df_right:", df_right.describe)
-        # print("right columns__", df_right. columns)
+        #print("df_right:", df_right.describe)
+        #print("right columns__", df_right. columns)
         SI_df = calculate_SI_new(df_left, df_right)
-        # print("list SI", len(SI_df))
+        #print("list SI", len(SI_df))
         SI_df = create_DF_SI(SI_df)
         #print("df_SI:", SI_df.describe)
         #df_left = df_left.drop(columns = exclude_columns_left)
