@@ -10,7 +10,9 @@ from sklearn.metrics import accuracy_score
 from sklearn.metrics import f1_score
 from sklearn.model_selection import cross_val_score
 from sklearn.svm import SVC
+from sklearn.feature_selection import RFE
 from sklearn import svm
+from sklearn.preprocessing import StandardScaler
 plt.matplotlib.use("WebAgg")
 import glob
 import os
@@ -52,6 +54,8 @@ print("Y__", y)
 X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.8, random_state = 1)
 ''' For further evaluation: https://scikit-learn.org/stable/modules/cross_validation.html '''
 
+## cross-validation  
+
 def f_importances(coef, names):
     imp = abs(coef)
     print(imp)
@@ -61,7 +65,7 @@ def f_importances(coef, names):
     plt.barh(range(len(names)), imp, align='center')
     plt.yticks(range(len(names)), names)
     plt.show()
-    plt.close()
+    #plt.close()
 # Step 4 Classifiert Training using SVM
 # poly, rbf, linear
 feature_names = data_X.columns.tolist()  #data_X.columns.values.tolist()
@@ -69,26 +73,60 @@ print("Feature_Names",feature_names)
 
 ##### linear SVM clasifier
 svclassifier_lin = SVC(kernel='linear', C=1, random_state= 42)
+
 # fit the model
-svclassifier_lin.fit(X_train, np.ravel(y_train, order="C"))
+svclassifier_lin.fit(X_train, np.ravel(y_train)) #, order="C")
+
 # importance plot
-f_importances(svclassifier_lin.coef_[0], feature_names)
+# summarize feature importance
+importance = svclassifier_lin.coef_[0]#.ravel()
+print("COEF LINEAR",importance)
+print("COEF LINEAR",type(importance))
+for i,v in enumerate(importance):
+	print('Feature: %0d, Score: %.5f' % (i,v))
+# plot feature importance
+plt.figure(figsize=(20,15))
+plt.title("SVM_lin feature importance obtained from coefficients"+ "_" + dataset, size =20)
+plt.yticks(range(len(importance)))
+plt.barh([x for x in range(len(importance))], importance, align="center")
+plt.show()
+
+print("SVC COEF Dimension", svclassifier_lin.coef_.ndim)
+for i in range(svclassifier_lin.coef_.ndim):
+    f_importances(svclassifier_lin.coef_[i], feature_names) ## does this make sense?
+
 #efficiency of the models
 lin_pred = svclassifier_lin.predict(X_test)
 print(confusion_matrix(y_test,lin_pred))
 print(classification_report(y_test,lin_pred))
+
 ### score the model 
 lin_cross_scores = cross_val_score(svclassifier_lin, X, y, cv=5)
 lin_accuracy = accuracy_score(y_test, lin_pred)
 lin_f1 = f1_score(y_test, lin_pred, average='weighted')
+print("SVC MODEL SCORES:")
 print(lin_cross_scores, "%0.2f accuracy with a standard deviation of %0.2f" % (lin_cross_scores.mean(), lin_cross_scores.std()))
 print('Accuracy (Linear Kernel): ', "%.2f" % (lin_accuracy*100))
 print('F1 (Linear Kernel): ', "%.2f" % (lin_f1*100))
 
+### recursive feature selection
+ss=StandardScaler()
+X_trains=ss.fit_transform(X_train)
+X_tests=ss.fit_transform(X_test)
+X_trains_df=pd.DataFrame(X_trains,columns=X_train.columns)
+svm_rfe_model=RFE(estimator=svclassifier_lin)
+svm_rfe_model_fit=svm_rfe_model.fit(X_trains_df, np.ravel(y_train))
+feat_index = pd.Series(data = svm_rfe_model_fit.ranking_, index = X_train.columns)
+signi_feat_rfe = feat_index[feat_index==1].index
+print('Significant features from RFE',signi_feat_rfe) ## use the features from X_train to generate new model
+print('Original number of features present in the dataset : {}'.format(data_X.shape[1]))
+print()
+print('Number of features selected by the Recursive feature selection technique is : {}'.format(len(signi_feat_rfe))) 
+
 ##### ploynomial SVM clasifier
 svclassifier_poly = SVC(kernel='poly', C=1)
 # fit the model 
-svclassifier_poly.fit(X_train, np.ravel(y_train, order="C"))
+svclassifier_poly.fit(X_train, np.ravel(np.ravel(y_train), order="C"))
 # importance plot
 '''rbf kernel implicitly transforms your features into a higher dimensional space of ' transformed features' and tries to separate 
  linearly in that new space. As the transformation is implicit you do not know the link with your original features. '''
@@ -107,7 +145,7 @@ model_log = LogisticRegression()
 # fit the model
 model_log.fit(X, y)
 # score the model
-print(f'model score on training data: {model_log.score(X_train, y_train)}')
+print(f'model score on training data: {model_log.score(X_train, np.ravel(y_train))}')
 print(f'model score on testing data: {model_log.score(X_test, y_test)}') 
 # get importance
 importances = pd.DataFrame(data={'Attribute': X_train.columns,
