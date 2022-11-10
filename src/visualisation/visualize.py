@@ -98,9 +98,9 @@ def plot_check_df(df, subject, color_dict, column):
     plt.show()
     plt.savefig("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/figures/"+ subject + column +".png")  
     plt.close()
-    #plt.close()
-    # sns.pairplot(df)
-    # plt.show()
+    sns.pairplot(df)
+    plt.show()
+    plt.close()
 
 
 # def subject_boxplots(df, name, subject, color_dict):
@@ -172,6 +172,9 @@ def plot_check_sim_cbf(df, subject, color_dict, column):
     sns.boxplot(x= 'severity', y= column, data=df, palette= color_dict, order = color_dict).set(title= "stride length of the different stroke categories " + subject)
     #plt.show()
     plt.savefig("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/figures/"+ subject + "_cbf_" + column +".png")  
+    plt.close()
+    sns.pairplot(df)
+    plt.show()
     plt.close()
 
 ########## MAIN #########

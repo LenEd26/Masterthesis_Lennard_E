@@ -1,10 +1,12 @@
 # Step1 Import Packages:
 from sklearn.metrics import confusion_matrix, classification_report
+from sklearn.inspection import permutation_importance
 from sklearn import svm, datasets
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from pandas import read_csv
+from pandas import DataFrame
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import f1_score
@@ -13,15 +15,16 @@ from sklearn.svm import SVC
 from sklearn.feature_selection import RFE
 from sklearn import svm
 from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import MinMaxScaler
 plt.matplotlib.use("WebAgg")
 import glob
 import os
 import json
-from sklearn.linear_model import LogisticRegression
+
 
 
 # Step2 Load dataset
-dataset = "data_sim_cbf"
+dataset = "data_sim"
 
 with open(os.path.join(os.getcwd(), 'path.json')) as f:
     paths = json.loads(f.read())
@@ -45,7 +48,15 @@ data = data.dropna()
 data_X = data.loc[:, ~data.columns.isin(["severity", "subject"])] ####### define X and Y from the overal Dataset!
 data_y = data.loc[:, data.columns.isin(["severity"])]#, "subject"])] 
 
-X = data_X
+## Data Normalization 
+''' MinMaxScaler/Normalization rescales all values to a range between 0 and 1 -> should be ued if the distribution
+    is not normal/gaussian'''
+# perform a robust scaler transform of the dataset
+trans = MinMaxScaler()
+data_X_new = DataFrame(trans.fit_transform(data_X), columns = data_X.columns)
+print(data_X_new.describe())
+
+X = data_X_new
 #print(X)
 y = data_y
 print("Y__", y)
@@ -53,8 +64,8 @@ print("Y__", y)
 # Step3 Split data in training and testing subsets
 X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.8, random_state = 1)
 ''' For further evaluation: https://scikit-learn.org/stable/modules/cross_validation.html '''
+## Cross validation
 
-## cross-validation  
 
 def f_importances(coef, names):
     imp = abs(coef)
@@ -71,7 +82,9 @@ def f_importances(coef, names):
 feature_names = data_X.columns.tolist()  #data_X.columns.values.tolist()
 print("Feature_Names",feature_names)
 
-##### linear SVM clasifier
+
+##### linear SVM clasifier ##########
+
 svclassifier_lin = SVC(kernel='linear', C=1, random_state= 42)
 
 # fit the model
@@ -86,12 +99,13 @@ for i,v in enumerate(importance):
 	print('Feature: %0d, Score: %.5f' % (i,v))
 # plot feature importance
 plt.figure(figsize=(20,15))
-plt.title("SVM_lin feature importance obtained from coefficients"+ "_" + dataset, size =20)
+plt.title("SVM_linear feature importance obtained from coefficients"+ "_" + dataset, size =20)
 plt.yticks(range(len(importance)))
-plt.barh([x for x in range(len(importance))], importance, align="center")
+plt.barh([x for x in range(len(importance))], abs(importance), align="center")
 plt.show()
 
-print("SVC COEF Dimension", svclassifier_lin.coef_.ndim)
+## use of dimensions ??
+print("SVC COEF Dimensions:", svclassifier_lin.coef_.ndim)
 for i in range(svclassifier_lin.coef_.ndim):
     f_importances(svclassifier_lin.coef_[i], feature_names) ## does this make sense?
 
@@ -101,13 +115,14 @@ print(confusion_matrix(y_test,lin_pred))
 print(classification_report(y_test,lin_pred))
 
 ### score the model 
-lin_cross_scores = cross_val_score(svclassifier_lin, X, y, cv=5)
-lin_accuracy = accuracy_score(y_test, lin_pred)
-lin_f1 = f1_score(y_test, lin_pred, average='weighted')
+lin_cross_scores = cross_val_score(svclassifier_lin, X, np.ravel(y), cv=5)
+lin_accuracy = accuracy_score(np.ravel(y_test), lin_pred)
+lin_f1 = f1_score(np.ravel(y_test), lin_pred, average='weighted')
 print("SVC MODEL SCORES:")
 print(lin_cross_scores, "%0.2f accuracy with a standard deviation of %0.2f" % (lin_cross_scores.mean(), lin_cross_scores.std()))
 print('Accuracy (Linear Kernel): ', "%.2f" % (lin_accuracy*100))
 print('F1 (Linear Kernel): ', "%.2f" % (lin_f1*100))
+
 
 ### recursive feature selection
 ss=StandardScaler()
@@ -123,10 +138,12 @@ print('Original number of features present in the dataset : {}'.format(data_X.sh
 print()
 print('Number of features selected by the Recursive feature selection technique is : {}'.format(len(signi_feat_rfe))) 
 
-##### ploynomial SVM clasifier
+
+##### ploynomial SVM clasifier ############
+
 svclassifier_poly = SVC(kernel='poly', C=1)
 # fit the model 
-svclassifier_poly.fit(X_train, np.ravel(np.ravel(y_train), order="C"))
+svclassifier_poly.fit(X_train, np.ravel(y_train, order="C"))
 # importance plot
 '''rbf kernel implicitly transforms your features into a higher dimensional space of ' transformed features' and tries to separate 
  linearly in that new space. As the transformation is implicit you do not know the link with your original features. '''
@@ -138,30 +155,12 @@ poly_f1 = f1_score(y_test, poly_pred, average='weighted')
 print('Accuracy (Polynomial Kernel): ', "%.2f" % (poly_accuracy*100))
 print('F1 (Polynomial Kernel): ', "%.2f" % (poly_f1*100))
 
-
-###### Logistic Regression
-# define the model
-model_log = LogisticRegression()
-# fit the model
-model_log.fit(X, y)
-# score the model
-print(f'model score on training data: {model_log.score(X_train, np.ravel(y_train))}')
-print(f'model score on testing data: {model_log.score(X_test, y_test)}') 
-# get importance
-importances = pd.DataFrame(data={'Attribute': X_train.columns,
-    'Importance': abs(model_log.coef_[0])})
-importances = importances.sort_values(by='Importance', ascending=True)
-# summarize feature importance
-plt.figure(figsize=(20,15))
-#plt.bar(x=importances['Attribute'], height=importances['Importance'], color='#087E8B')
-plt.barh(importances['Attribute'], importances['Importance'])#, align='center')
-plt.title('LogReg Feature importances obtained from coefficients' + "_" + dataset, size=20)
-plt.yticks(range(len(importances['Attribute'])), importances['Attribute'])
-#plt.xticks(rotation='vertical')
-plt.show()
-
-
-
+## permuatation for feature importance 
+perm_importance = permutation_importance(svclassifier_poly, X_test, y_test)
+features = np.array(feature_names)
+sorted_idx = perm_importance.importances_mean.argsort()
+plt.barh(features[sorted_idx], perm_importance.importances_mean[sorted_idx])
+plt.xlabel("Permutation Importance")
 
 
 # # Step4 Classifier Training using SVM
