@@ -5,7 +5,22 @@ from src.LFRF_parameters import pipeline_playground
 
 ### PARAMS START ###
 
-dataset = 'data_sim_cbf'
+dataset = "data_charite"
+
+
+if dataset == "data_charite":
+    stroke_list = [
+        "imu0001",
+        "imu0002"
+        #"imu0003",
+    ]
+
+    runs = [
+        "visit1",
+        "visit2"
+    ]
+
+
 if dataset == "data_sim":
     stroke_list = [
         "S1",

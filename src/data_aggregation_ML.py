@@ -12,7 +12,7 @@ from src.features.symmetry_index import create_DF_SI
 
 
 ### previously set parameters depending on folder structure
-dataset = "data_kiel"
+dataset = "data_charite"
 win_size = 10
 win_slide = 2
 

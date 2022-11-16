@@ -10,10 +10,23 @@ from src.LFRF_parameters.preprocessing.get_imu_gyro_thresholds import AccPlot, G
 from data_reader.DataLoader import DataLoader
 
 #### PARAMS START ####
-dataset = "data_sim_cbf"
+dataset = "data_charite"
 load_raw = True  # load (and plot) raw IMU data into interim data
 get_stance_threshold = False  # determine stance threshold
 get_initial_contact = False # determine IMU initial contact
+
+if dataset == "data_charite":
+    sub_list = [
+        "imu0001",
+        "imu0002"
+        #"imu0003",
+    ]
+
+    runs = [
+        "visit1",
+        "visit2"
+    ]
+
 
 if dataset == "data_kiel":
     # kiel dataset
@@ -149,7 +162,7 @@ if get_stance_threshold:
     overwrite = False  # if False: append to existing file 
 
     # if no file, create one. Otherwise append to the existing file
-    if not os.path.isfile(os.path.join(interim_base_path, 'stance_magnitude_thresholds_manual.csv')) or overwrite:
+    if not os.path.isfile(os.path.join(interim_base_path, 'stance_magnitude_thresholds.csv')) or overwrite:
         pd.DataFrame(
             columns=[
                 "subject",
@@ -160,7 +173,7 @@ if get_stance_threshold:
                 "stance_count_threshold_right",
             ],
         ).to_csv(
-            os.path.join(interim_base_path, "stance_magnitude_thresholds_manual.csv"), index=False
+            os.path.join(interim_base_path, "stance_magnitude_thresholds.csv"), index=False
         )
 
     for subject_id, subject in enumerate(sub_list):
@@ -198,7 +211,7 @@ if get_stance_threshold:
 overwrite = True  # if False: append to existing file 
 if get_initial_contact:
     # if no file, create one. Otherwise append to the existing file
-    if not os.path.isfile(os.path.join(interim_base_path, 'imu_initial_contact_manual.csv')) or overwrite:
+    if not os.path.isfile(os.path.join(interim_base_path, 'imu_initial_contact.csv')) or overwrite:
         pd.DataFrame(
             columns=[
                 "subject",
@@ -207,7 +220,7 @@ if get_initial_contact:
                 "imu_initial_contact_right"
             ],
         ).to_csv(
-            os.path.join(interim_base_path, "imu_initial_contact_manual.csv"), index=False
+            os.path.join(interim_base_path, "imu_initial_contact.csv"), index=False
         )
 
     for subject_id, subject in enumerate(sub_list):
