@@ -10,14 +10,15 @@ dataset = "data_charite"
 
 if dataset == "data_charite":
     stroke_list = [
-        "imu0001",
-        "imu0002"
+        #"imu0001",
+        #"imu0002",
         #"imu0003",
+        "imu0006"
     ]
 
     runs = [
         "visit1",
-        "visit2"
+        #"visit2"
     ]
 
 

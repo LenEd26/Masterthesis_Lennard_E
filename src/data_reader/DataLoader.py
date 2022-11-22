@@ -141,7 +141,50 @@ class DataLoader:
         #self.data_df["Score"] =  self.data_df[self.score[0]]
         return self.data_df 
 
+    def load_xsens_data_time(self):
+        """load xsens DOTs data and add manual timestamps 
+        (for recordings with corrupted timestamps)
 
+        Returns:
+            _type_: _description_
+        """
+        # find file containing key word for left or right foot
+        no_file = True
+        for file in os.listdir(self.data_path):
+            if fnmatch.fnmatch(file, '*.csv') and (self.location_kw in file):
+                file_name = file
+                print(file_name)
+                no_file = False
+
+        if no_file:
+            print('No file for ' + self.location_kw + ' found.')
+            return
+
+        # extract data columns
+        raw_data_df = pd.read_csv(os.path.join(self.data_path, file_name), skiprows=7, low_memory=False)
+        self.data_df = raw_data_df.filter(['Gyr_X', 'Gyr_Y', 'Gyr_Z', 'Acc_X', 'Acc_Y', 'Acc_Z'], axis=1)
+        self.data_df = self.data_df.rename(columns={
+                                'Acc_X': 'AccX',
+                                'Acc_Y': 'AccY',
+                                'Acc_Z': 'AccZ',
+                                'Gyr_X': 'GyrX',
+                                'Gyr_Y': 'GyrY',
+                                'Gyr_Z': 'GyrZ'})
+
+        self.data_df = self.data_df.apply(pd.to_numeric, errors='coerce')  # convert all columns of DataFrame to numbers
+        self.data_df.dropna(inplace=True)  # in case there are non-numeric values being converted to NaN
+        self.data_df["GyrX"] = self.data_df["GyrX"]   # invert gyro Y axis for gait event detection
+        self.data_df['AccX'] = self.data_df['AccX'] / 9.8
+        self.data_df['AccY'] = self.data_df['AccY'] / 9.8
+        self.data_df['AccZ'] = self.data_df['AccZ'] / 9.8
+
+        # create artificial timestamp based on sampling rate
+        sampling_rate = 120    # sampling rate
+        self.data_df["timestamp"] = np.arange(0, len(self.data_df) / sampling_rate, 1 / sampling_rate)    
+
+        return self.data_df
+
+    
     def load_sim_data(self):
         # find file containing key word for left or right foot
         no_file = True

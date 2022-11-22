@@ -12,19 +12,20 @@ from data_reader.DataLoader import DataLoader
 #### PARAMS START ####
 dataset = "data_charite"
 load_raw = True  # load (and plot) raw IMU data into interim data
-get_stance_threshold = False  # determine stance threshold
+get_stance_threshold = True  # determine stance threshold
 get_initial_contact = False # determine IMU initial contact
 
 if dataset == "data_charite":
     sub_list = [
-        "imu0001",
-        "imu0002"
-        #"imu0003",
-    ]
+        #"imu0001",
+        #"imu0002"
+        #"imu0003",  #IMU0003 DataLoader Xsense time is used
+        "imu0006"
+        ]
 
     runs = [
         "visit1",
-        "visit2"
+        #"visit2"
     ]
 
 
@@ -143,6 +144,7 @@ if load_raw:
                     data_loader = DataLoader(read_folder_path, loc, sub_list, runs)
                     #df_loc = data_loader.load_kiel_data()
                     #df_loc = data_loader.load_xsens_data()
+                    #df_loc = data_loader.load_xsens_data_time() 
                     df_loc = data_loader.load_sim_data()
                     #df_loc = data_loader.load_stanford_data()
                     # df_loc = data_loader.load_GaitUp_data()

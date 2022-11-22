@@ -102,6 +102,7 @@ def add_column_LR(side, subjects, methods):
                 else:
                     #create SI and av df
                     df = pd.read_csv(files[0])
+                    #df  = df[df["is_outlier"] == False]   # outlier ?
                     #print("dataframe before CW", df)
                     #print("Colnames dataframe before CW", df.columns)
                     win_df = construct_windowed_df(df, win_size, win_slide, side)

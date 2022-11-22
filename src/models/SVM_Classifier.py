@@ -128,7 +128,7 @@ print('Accuracy (Linear Kernel): ', "%.2f" % (lin_accuracy*100))
 print('F1 (Linear Kernel): ', "%.2f" % (lin_f1*100))
 
 
-### recursive feature selection
+######## recursive feature selection #############
 # ss=StandardScaler()
 # X_trains=ss.fit_transform(X_train)
 # X_tests=ss.fit_transform(X_test)

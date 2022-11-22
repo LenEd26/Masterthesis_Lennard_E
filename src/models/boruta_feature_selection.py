@@ -8,7 +8,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 
-# Step2 Load dataset
+# Load dataset
 dataset = "data_sim_cbf"
 
 with open(os.path.join(os.getcwd(), 'path.json')) as f:

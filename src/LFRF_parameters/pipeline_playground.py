@@ -24,15 +24,15 @@ def execute(sub_list, runs, dataset, data_base_path):
                             'interim_base_path': os.path.join(data_base_path, "interim"),
                             'processed_base_path': os.path.join(data_base_path, "processed"),
                             'overwrite': True,  # overwrite the trajectory estimations
-                            'show_figures': 0,  # show figures from intermediate steps. 2: figures are saved; 1: figures are shown; 0: no figures plotted
+                            'show_figures': 1,  # show figures from intermediate steps. 2: figures are saved; 1: figures are shown; 0: no figures plotted
                             'location_kws': ['LF', 'RF'],
                             'data_loader': PhysilogDataLoader,
                             'trajectory_estimator': TuncaTrajectoryEstimator,
                             'sampling_rate': 120, 
                             'gait_event_detector': TuncaEventDetector,
                             'prominence_search_threshold': 0.7, #0.7
-                            'prominence_ic': 0.01,
-                            'prominence_fo': 0.01, #1
+                            'prominence_ic': 0.7,
+                            'prominence_fo': 0.7, #1
                             "reference_loader": OptogaitReferenceLoader,
                             "reference_name": "OptoGait", 
                             'dataset': dataset,
