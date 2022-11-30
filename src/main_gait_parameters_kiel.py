@@ -22,19 +22,23 @@ control_list = [
 ]
 
 stroke_list = [
-    #"pp077",
-    "pp111",
-    #"pp122",
-    "pp152"
+        "pp077",
+        "pp101",
+        "pp109",
+        "pp112",
+        "pp122",
+        "pp123",
+        "pp145",
+        "pp149",
 ]
 
 
 runs = [
-    #"treadmill"      # all treadmill data, including changing speed
+    "treadmill"      # all treadmill data, including changing speed
     # "treadmill_speed1",     # constant speed 1
     # "treadmill_speed2",     # constant speed 2
     # "gait1",
-    "gait2",
+    #"gait2",
     # "walk_fast",
     #"walk_preferred",
     # "walk_slow"

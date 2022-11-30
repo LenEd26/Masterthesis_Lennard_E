@@ -51,11 +51,11 @@ def iqr_outliers(df, feature):
     lower_limit = Q1 - 1.5 * IQR
     return upper_limit, lower_limit
 
-def exclude_outlier(df):
-    for column in df.iloc[:,:-4]:
+def exclude_outlier(df, columns):
+    for column in columns:
         #print("column",column)
         for cell in df[column]:
-            upper, lower = iqr_outliers(df.iloc[:,:-4], column)
+            upper, lower = iqr_outliers(df, column)
             #print(column, "_Upper whisker: ", upper)
             #print(column, "_Lower Whisker: ", lower)
             #print("cell",cell)
@@ -67,7 +67,7 @@ def exclude_outlier(df):
 
     # check for selected outlier set to NA
     print("describe: ", df.describe())
-    print("subject unique before drop", df.subject.unique())
+    #print("subject unique before drop", df.subject.unique())
     print("sum of NAs: ", df.isnull().sum())
 
     # drop selected outlier = NA
@@ -77,10 +77,10 @@ def exclude_outlier(df):
     print('new shape_' , df.shape)
 
     print(df.describe())
-    print(df.method.unique())
-    print(df.subject.unique())
-    print(df.method.value_counts())
-    print(df.subject.value_counts())
+    #print(df.method.unique())
+    #print(df.subject.unique())
+    #print(df.method.value_counts())
+    #print(df.subject.value_counts())
     
     return df
 
@@ -219,13 +219,13 @@ if dataset == "data_charite":
 
     runs = [
         "visit1",
-        #"visit2"
+        "visit2"
     ]
     for sub in stroke_list:
         subject = sub
         for i in data_columns:
             column = i
-            #plot_check_charite(data[data["subject"]==subject], subject, color_dict, column) 
+            plot_check_charite(data[data["subject"]==subject], subject, color_dict, column) 
 
             
     color_dict_2 = {"imu0001":"C0", "imu0002":"C1", "imu0003":"C2", "imu0006":"C3"}

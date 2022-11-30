@@ -12,7 +12,7 @@ from data_reader.DataLoader import DataLoader
 #### PARAMS START ####
 dataset = "data_charite"
 load_raw = True  # load (and plot) raw IMU data into interim data
-get_stance_threshold = True  # determine stance threshold
+get_stance_threshold = False  # determine stance threshold
 get_initial_contact = False # determine IMU initial contact
 
 if dataset == "data_charite":
@@ -24,22 +24,22 @@ if dataset == "data_charite":
         ]
 
     runs = [
-        "visit1",
-        #"visit2"
+        #"visit1",
+        "visit2"
     ]
 
 
 if dataset == "data_kiel":
     # kiel dataset
     sub_list = [
-        # "pp001",
         "pp077",
-        #"pp111",
+        "pp101",
+        "pp109",
+        "pp112",
         "pp122",
-        #"pp152",
-        # "pp105",
-        # "pp112",
-        # "pp114",
+        "pp123",
+        "pp145",
+        "pp149",
         # "pp139"
     ]
     runs = [

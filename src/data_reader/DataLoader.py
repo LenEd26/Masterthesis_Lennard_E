@@ -65,6 +65,7 @@ class DataLoader:
                 "GyrY",
                 "GyrZ"
             ])
+        #self.data_df["GyrX"] = self.data_df["GyrX"] * (-1)
 
         # create artificial timestamp based on sampling rate
         fs = mat_data["fs"]     # get sampling rate
@@ -200,6 +201,7 @@ class DataLoader:
 
         # extract data columns
         raw_data_df = pd.read_csv(os.path.join(self.data_path, file_name) , low_memory=False, skiprows=7, on_bad_lines='skip')#
+        #raw_data_df = raw_data_df.iloc[:19600,:] # only for imu0006
         print(raw_data_df.describe())
         self.data_df = raw_data_df.filter(['SampleTimeFine', 'Gyr_X', 'Gyr_Y', 'Gyr_Z', 'Acc_X', 'Acc_Y', 'Acc_Z'], axis=1)
         self.data_df = self.data_df.rename(columns={'SampleTimeFine': 'timestamp',

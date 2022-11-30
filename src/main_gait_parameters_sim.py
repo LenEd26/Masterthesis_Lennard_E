@@ -17,8 +17,8 @@ if dataset == "data_charite":
     ]
 
     runs = [
-        "visit1",
-        #"visit2"
+        #"visit1",
+        "visit2"
     ]
 
 
