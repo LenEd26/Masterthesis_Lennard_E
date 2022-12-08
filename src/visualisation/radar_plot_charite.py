@@ -141,7 +141,7 @@ ax.set_theta_direction(-1)
  
 # Draw one axe per variable + add labels
 plt.xticks(angles[:-1], categories)
- 
+ax.set_xticklabels(categories, fontsize = 17)
 # Draw ylabels
 ax.set_rlabel_position(0)
 max_val = v_2_norm_mean.max()

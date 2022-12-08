@@ -3,14 +3,14 @@ import os
 from pickle import FALSE
 import pandas as pd
 import matplotlib
-matplotlib.use("WebAgg")
+#matplotlib.use("WebAgg")
 import matplotlib.pyplot as plt
 from src.LFRF_parameters.preprocessing.plot_raw_xyz import plot_acc_gyr
 from src.LFRF_parameters.preprocessing.get_imu_gyro_thresholds import AccPlot, GyroPlot
 from data_reader.DataLoader import DataLoader
 
 #### PARAMS START ####
-dataset = "data_charite"
+dataset = "data_kiel"
 load_raw = True  # load (and plot) raw IMU data into interim data
 get_stance_threshold = False  # determine stance threshold
 get_initial_contact = False # determine IMU initial contact
@@ -141,11 +141,11 @@ if load_raw:
                 if from_interim:  # load interim data
                     df_loc = pd.read_csv(os.path.join(read_folder_path, loc + ".csv"))
                 else:  # load raw data (& save file to the interim folder)
-                    data_loader = DataLoader(read_folder_path, loc, sub_list, runs)
-                    #df_loc = data_loader.load_kiel_data()
+                    data_loader = DataLoader(read_folder_path, loc)#, sub_list, runs)
+                    df_loc = data_loader.load_kiel_data()
                     #df_loc = data_loader.load_xsens_data()
                     #df_loc = data_loader.load_xsens_data_time() 
-                    df_loc = data_loader.load_sim_data()
+                    #df_loc = data_loader.load_sim_data()
                     #df_loc = data_loader.load_stanford_data()
                     # df_loc = data_loader.load_GaitUp_data()
                     # df_loc = data_loader.cut_data(500, 10500)  # (if necessary: segment data)

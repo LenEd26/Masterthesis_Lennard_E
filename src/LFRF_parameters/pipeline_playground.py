@@ -167,7 +167,7 @@ def execute(sub_list, runs, dataset, data_base_path):
 
     # create the pipeline
     pipeline = Pipeline(pipeline_config)
-    print("pipeine______:", pipeline)
+    print("pipeline______:", pipeline)
 
     # list of tuples (run number, subject number)
     everything = [(x, y) for x in range(0, len(pipeline_config["subjects"])) for y in range(0, len(pipeline_config["runs"]))]

@@ -31,7 +31,7 @@ class Pipeline:
         self.config = pipeline_config
         self.imu_ic = None
         self.imu_gyro_threshold = None
-        #self.evaluator = Evaluator()
+        self.evaluator = Evaluator()
         
         #load initial contacts from csv file
         self.imu_ic_timestamps = pd.read_csv(
@@ -193,14 +193,14 @@ class Pipeline:
                                  save_fig_directory,
                                  imu_ic).summary()
 
-        # if save:
-        save_path = os.path.join(
+        if save:
+            save_path = os.path.join(
                 self.config["processed_base_path"],
                 self.config["subjects"][subject_num],
                 self.config["runs"][run_num]
             )
-        #     if not os.path.exists(save_path):
-        #         os.makedirs(save_path)
+            if not os.path.exists(save_path):
+                os.makedirs(save_path)
 
         summary["left"].to_csv(os.path.join(save_path, "left_foot_core_params_py_n.csv"), index=False)
         summary["right"].to_csv(os.path.join(save_path, "right_foot_core_params_py_n.csv"), index=False)

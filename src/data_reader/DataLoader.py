@@ -9,7 +9,7 @@ class DataLoader:
     """
     load raw IMU data & save as .csv file
     """
-    def __init__(self, data_path, location_kw, sub_list, runs):
+    def __init__(self, data_path, location_kw):#, sub_list, runs):
         self.data_path = data_path
         self.location_kw = location_kw
         self.data_df = None

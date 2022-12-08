@@ -22,7 +22,7 @@ control_list = [
 ]
 
 stroke_list = [
-        "pp077",
+        #"pp077",
         "pp101",
         "pp109",
         "pp112",
@@ -35,8 +35,8 @@ stroke_list = [
 
 runs = [
     "treadmill"      # all treadmill data, including changing speed
-    # "treadmill_speed1",     # constant speed 1
-    # "treadmill_speed2",     # constant speed 2
+    #"treadmill_speed1",     # constant speed 1
+    #"treadmill_speed2",     # constant speed 2
     # "gait1",
     #"gait2",
     # "walk_fast",
@@ -47,9 +47,9 @@ dataset = 'data_kiel'
 with open(os.path.join(os.path.dirname(__file__), '..', 'path.json')) as f:
     paths = json.loads(f.read())
 data_base_path = paths[dataset]
+
+print("base path  ", data_base_path)
 ## PARAMS END ###
 
 ### Execute the Gait Analysis Pipeline ###
 pipeline_playground.execute(stroke_list, runs, dataset, data_base_path)
-
-## aggregation of datasets
