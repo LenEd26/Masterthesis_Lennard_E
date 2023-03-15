@@ -13,6 +13,7 @@ from src.LFRF_parameters.pipeline.evaluator import Evaluator
 from src.visualisation.plot import plot_multi_3d_view, show, plot_accel_gyro
 
 
+
 class Pipeline:
     """
     This class is the skeleton for all possible pipeline instantiations.
@@ -193,6 +194,7 @@ class Pipeline:
                                  save_fig_directory,
                                  imu_ic).summary()
 
+        save_path = ''
         if save:
             save_path = os.path.join(
                 self.config["processed_base_path"],
@@ -312,7 +314,7 @@ class Pipeline:
                 subject_num, run_num, gait_events, trajectories, save_fig_dir, imu_ic
             )
             print(gait_parameters)
-
+            
 
             #print('calculate aggregate_parameters')
             #aggregate_params, _ = aggregate_parameters(aggregate_params_dir, save=True)

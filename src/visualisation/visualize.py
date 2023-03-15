@@ -13,18 +13,6 @@ import json
 import glob 
 
 
-dataset = "data_charite"
-# Define filepath
-
-with open(os.path.join(os.getcwd(), 'path.json')) as f:
-    paths = json.loads(f.read())
-final_datapath= os.path.join(paths[dataset], "final_data")
-# Load Excel file using Pandas
-#file = pd.ExcelFile(final_datapath)
-csv_file = glob.glob(os.path.join(final_datapath, "*.csv"))
-
-
-
 def df_check_outlier_column(df):
     print(df.shape)
     print(df.info()) #last two columns are dtype object
@@ -185,7 +173,7 @@ def plot_check_charite(df, subject, color_dict, column):
     # plt.close()
     sns.boxplot(x='severity', y= column, data=df, palette= color_dict, order = color_dict).set(title= column + " of both measurements for " + subject)
     #plt.show()
-    plt.savefig("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/figures/"+ subject + "_charite_" + column +".png")  
+    plt.savefig("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/figures/Charite_features_per_patient/"+ subject + "_charite_" + column +".png")  
     plt.close()
     # sns.pairplot(df)
     # plt.show()
@@ -193,51 +181,6 @@ def plot_check_charite(df, subject, color_dict, column):
 ########## MAIN #########
 
 #####Charite
-if dataset == "data_charite":
-    color_dict = {"visit1":"C0", "visit2":"C1"}
-    df_list = []
-
-    print(csv_file)
-    for path in csv_file:
-        df_s = pd.read_csv(path)
-        df_list.append(df_s)
-    data = pd.concat(df_list, axis = 0, ignore_index= True)
-    #data = df_check_outlier_column(data)
-
-    #color_dict = data["subject"]
-    data_columns = list(data.columns.values)
-    data_columns.remove("subject")
-    data_columns.remove("severity")
-    print(data_columns)   
-    print("appending data:", data.describe())
-    stroke_list = [
-    "imu0001",
-    "imu0002",
-    "imu0003",
-    "imu0006"
-    ]
-
-    runs = [
-        "visit1",
-        "visit2"
-    ]
-    for sub in stroke_list:
-        subject = sub
-        for i in data_columns:
-            column = i
-            plot_check_charite(data[data["subject"]==subject], subject, color_dict, column) 
-
-            
-    color_dict_2 = {"imu0001":"C0", "imu0002":"C1", "imu0003":"C2", "imu0006":"C3"}
-    for visit in runs:
-        for i in data_columns:
-            column2 = i
-            sns.boxplot(x='subject', y= column2, data=data[data["severity"]==visit], palette= color_dict_2, order = color_dict_2
-                ).set(title= column2 + " of all subjects in " + visit)
-            #plt.show()
-            #plt.savefig("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/figures/"+ visit + "_charite_features_over_subjects " + column2 +".png")  
-            plt.savefig("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/figures/"+ visit + "comparison between subjects for " + column2 +".png")
-            plt.close()
 
 
 
@@ -249,32 +192,94 @@ if dataset == "data_charite":
 # side ="_left" #"_right"
 # feature = "stride_length_avg"
             
-if dataset == "data_sim_cbf":
-    subject = "S1"
-    df_list = []
-    #color_dict_sim = {"NLA":"C0"}
-    #color_dict = {"regular":"C0", "1P":"C1", "2P":"C2", "3P":"C3"}
-    color_dict = {"leicht":"C0", "leicht3":"C1", "normal":"C2", "stark":"C3"}
-
-    print(csv_file)
-    for path in csv_file:
-        df_s = pd.read_csv(path)
-        df_list.append(df_s)
-    data = pd.concat(df_list, axis = 0, ignore_index= True)
-
-    data_columns = list(data.columns.values)
-    data_columns.remove("subject")
-    data_columns.remove("severity")
-    print(data_columns)   
-    print("appending data:", data.describe())
 
 
-    for i in data_columns:
-        column = i
-        plot_check_sim_cbf(data, subject, color_dict, column)
+if __name__ == "__main__":
+    dataset = "data_charite"
+    # Define filepath
+
+    with open(os.path.join(os.getcwd(), 'path.json')) as f:
+        paths = json.loads(f.read())
+        final_datapath= os.path.join(paths[dataset], "final_data")
+    # Load Excel file using Pandas
+    #file = pd.ExcelFile(final_datapath)
+        csv_file = glob.glob(os.path.join(final_datapath, "*.csv"))
+
+    if dataset == "data_charite":
+        color_dict = {"visit1":"C0", "visit2":"C1"}
+        df_list = []
+
+        print(csv_file)
+        for path in csv_file:
+            df_s = pd.read_csv(path)
+            df_list.append(df_s)
+        data = pd.concat(df_list, axis = 0, ignore_index= True)
+        #data = df_check_outlier_column(data)
+
+        #color_dict = data["subject"]
+        data_columns = list(data.columns.values)
+        data_columns.remove("subject")
+        data_columns.remove("severity")
+        print(data_columns)   
+        print("appending data:", data.describe())
+        stroke_list = [
+        "imu0001",
+        "imu0002",
+        "imu0003",
+        "imu0006",
+        "imu0007",
+        "imu0008",
+        "imu0009"
+        ]
+
+        runs = [
+            "visit1",
+            "visit2"
+        ]
+        for sub in stroke_list:
+            subject = sub
+            for i in data_columns:
+                column = i
+                plot_check_charite(data[data["subject"]==subject], subject, color_dict, column) 
+
+                
+        color_dict_2 = {"imu0001":"C0", "imu0002":"C1", "imu0003":"C2", "imu0006":"C3", "imu0007":"C4", "imu0008":"C5", "imu0009":"C6"}
+        for visit in runs:
+            for i in data_columns:
+                column2 = i
+                sns.boxplot(x='subject', y= column2, data=data[data["severity"]==visit], palette= color_dict_2, order = color_dict_2
+                    ).set(title= column2 + " of all subjects in " + visit)
+                #plt.show()
+                #plt.savefig("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/figures/"+ visit + "_charite_features_over_subjects " + column2 +".png")  
+                plt.savefig("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/figures/Charite Comparison FAC/"+ visit+ " " + "comparison between subjects for " + column2 +".png")
+                plt.close()
+
+    if dataset == "data_sim_cbf":
+        subject = "S1"
+        df_list = []
+        #color_dict_sim = {"NLA":"C0"}
+        #color_dict = {"regular":"C0", "1P":"C1", "2P":"C2", "3P":"C3"}
+        color_dict = {"leicht":"C0", "leicht3":"C1", "normal":"C2", "stark":"C3"}
+
+        print(csv_file)
+        for path in csv_file:
+            df_s = pd.read_csv(path)
+            df_list.append(df_s)
+        data = pd.concat(df_list, axis = 0, ignore_index= True)
+
+        data_columns = list(data.columns.values)
+        data_columns.remove("subject")
+        data_columns.remove("severity")
+        print(data_columns)   
+        print("appending data:", data.describe())
+
+
+        for i in data_columns:
+            column = i
+            plot_check_sim_cbf(data, subject, color_dict, column)
+
+    
 #color_dict_sim = {"regular":"C0", "1P":"C1", "2P":"C2", "3P":"C3"}
-
-
 #plot_check_df(data, subject, color_dict_sim, side, feature, filter_for_sub=False)
 #plot_check_df(df_sim_left, "sim_left", color_dict_sim)
 #subject_boxplots(data, side, subject)

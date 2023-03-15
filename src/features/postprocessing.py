@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 module_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')  # src folder
 if module_path not in sys.path:
     sys.path.append(module_path)
-from data.imu import IMU
+from data_reader.imu import IMU
 
 """
 Functions to select a subset of the strides recorded in each 6-minute session.

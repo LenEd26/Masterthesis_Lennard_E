@@ -186,7 +186,7 @@ class DataLoader:
         return self.data_df
 
     
-    def load_sim_data(self):
+    def load_charite_data(self):
         # find file containing key word for left or right foot
         no_file = True
         for file in os.listdir(self.data_path):
@@ -208,7 +208,7 @@ class DataLoader:
                                 'Acc_X': 'AccX',
                                 'Acc_Y': 'AccY',
                                 'Acc_Z': 'AccZ',
-                                'Gyr_X': 'GyrX',   #!Swapped for leicht2 sim_cbf
+                                'Gyr_X': 'GyrX', 
                                 'Gyr_Y': 'GyrY',
                                 'Gyr_Z': 'GyrZ'})
 

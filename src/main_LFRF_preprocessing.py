@@ -3,14 +3,14 @@ import os
 from pickle import FALSE
 import pandas as pd
 import matplotlib
-#matplotlib.use("WebAgg")
+matplotlib.use("WebAgg")
 import matplotlib.pyplot as plt
 from src.LFRF_parameters.preprocessing.plot_raw_xyz import plot_acc_gyr
 from src.LFRF_parameters.preprocessing.get_imu_gyro_thresholds import AccPlot, GyroPlot
 from data_reader.DataLoader import DataLoader
 
 #### PARAMS START ####
-dataset = "data_kiel"
+dataset = "data_charite"
 load_raw = True  # load (and plot) raw IMU data into interim data
 get_stance_threshold = False  # determine stance threshold
 get_initial_contact = False # determine IMU initial contact
@@ -20,11 +20,14 @@ if dataset == "data_charite":
         #"imu0001",
         #"imu0002"
         #"imu0003",  #IMU0003 DataLoader Xsense time is used
-        "imu0006"
+        "imu0006"  #Not all the data can be used -> check data loader
+        #"imu0007",
+        #"imu0008",
+        #"imu0009"
         ]
 
     runs = [
-        #"visit1",
+        "visit1",
         "visit2"
     ]
 
@@ -142,10 +145,10 @@ if load_raw:
                     df_loc = pd.read_csv(os.path.join(read_folder_path, loc + ".csv"))
                 else:  # load raw data (& save file to the interim folder)
                     data_loader = DataLoader(read_folder_path, loc)#, sub_list, runs)
-                    df_loc = data_loader.load_kiel_data()
+                    #df_loc = data_loader.load_kiel_data()
                     #df_loc = data_loader.load_xsens_data()
                     #df_loc = data_loader.load_xsens_data_time() 
-                    #df_loc = data_loader.load_sim_data()
+                    df_loc = data_loader.load_charite_data()
                     #df_loc = data_loader.load_stanford_data()
                     # df_loc = data_loader.load_GaitUp_data()
                     # df_loc = data_loader.cut_data(500, 10500)  # (if necessary: segment data)

@@ -16,16 +16,22 @@ from visualize import exclude_outlier
 
 
 dataset = "data_charite"
-subject = "imu0006"
+subject = "imu0001"
+windowed = True
 # Define filepath
 
 with open(os.path.join(os.getcwd(), 'path.json')) as f:
     paths = json.loads(f.read())
 final_datapath= os.path.join(paths[dataset], "final_data")
+final_datapath_full_data = os.path.join(paths[dataset], "one_window_final_data")
 
-csv_file = glob.glob(os.path.join(final_datapath, "*.csv"))
+if windowed == True:
+    csv_file = glob.glob(os.path.join(final_datapath, "*.csv"))
 
+if windowed == False:
+    csv_file = glob.glob(os.path.join(final_datapath_full_data, "*.csv"))
 df_list = []
+
 for path in csv_file:
     df_s = pd.read_csv(path)
     df_list.append(df_s)
@@ -55,7 +61,7 @@ features_charite = data_subject[['stride_length_avg_left', 'clearance_avg_left',
        'stride_length_SI', 'clearance_SI', 'stride_time_SI', 'swing_time_SI',
        'stance_time_SI', 'stance_ratio_SI', 'cadence_SI', 'speed_SI']]
 
-print(features_charite.describe())
+print("features descr.", features_charite.describe())
 
 
 
@@ -86,6 +92,9 @@ visit_2.drop("severity",inplace = True, axis = 1)
 visit_2.drop("index", inplace = True, axis = 1)
 print("visit_2", visit_2.describe())
 
+#for check of radarplots
+diff_in_values = visit_1 - visit_2
+print("diff in values", diff_in_values.transpose())
 
 visit_1_norm = visit_1.div(visit_1).reset_index()
 visit_1_norm.dropna(inplace=True)
@@ -121,6 +130,12 @@ print("VISIT 2 LOC",visit_2_norm.transpose())
 
 features_v1v2 = features_charite.transpose()
 
+print("visit2!", visit_2)
+print("visit2! transposed", visit_2.transpose())
+
+
+visit_2_trans = visit_2_norm.transpose()
+visit_1_trans = visit_1_norm.transpose()
 # ------- PART 1: Create background
  
 # number of variable
@@ -144,27 +159,40 @@ plt.xticks(angles[:-1], categories)
 ax.set_xticklabels(categories, fontsize = 17)
 # Draw ylabels
 ax.set_rlabel_position(0)
-max_val = v_2_norm_mean.max()
-print(max_val)
-plt.yticks(np.arange(0, max_val, step=0.5), color="grey", size=7)
-plt.ylim(0,max_val)
+if windowed == True:
+    max_val = v_2_norm_mean.max()
+    print("max_val", max_val)
+    plt.yticks(np.arange(0, max_val, step=0.5), color="grey", size=7)  
+    plt.ylim(0,max_val) 
+elif windowed == False:
+    max_val = visit_2_trans.max()
+    print("max_val", max_val)
+    plt.yticks(np.arange(0, max_val.max(), step=0.5), color="grey", size=7)   
+    plt.ylim(0,max_val.max())   
 
 # ------- PART 2: Add plots
  
 # Plot each individual = each line of the data
 # Ind1
-values=v_1_norm_mean.values.flatten().tolist()
-print("VALUES1", values)
-values += values[:1]
-ax.plot(angles, values, linewidth=1, linestyle='solid', label="Visit 1")
-ax.fill(angles, values, 'b', alpha=0.1)
+if windowed == True:
+    values1 = v_1_norm_mean.values.flatten().tolist()
+elif windowed == False:
+    values1 = visit_1_trans.values.flatten().tolist()
+
+print("VALUES1", values1)
+values1 += values1[:1]
+ax.plot(angles, values1, linewidth=1, linestyle='solid', label="Visit 1")
+ax.fill(angles, values1, 'b', alpha=0.1)
  
 # Ind2
-values=v_2_norm_mean.values.flatten().tolist()
-print("VALUES2", values)
-values += values[:1]
-ax.plot(angles, values, linewidth=1, linestyle='solid', label="Visit 2")
-ax.fill(angles, values, 'r', alpha=0.1)
+if windowed == True:
+    values2= v_2_norm_mean.values.flatten().tolist()
+elif windowed == False:
+    values2= visit_2_trans.values.flatten().tolist()
+print("VALUES2", values2)
+values2 += values2[:1]
+ax.plot(angles, values2, linewidth=1, linestyle='solid', label="Visit 2")
+ax.fill(angles, values2, 'r', alpha=0.1)
  
 # Add legend
 plt.legend(loc='upper right', bbox_to_anchor=(0.1, 0.1))
@@ -183,7 +211,7 @@ fig.suptitle(
 )
 # Show the graph
 plt.show()
-plt.savefig("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/figures/"+ dataset +"_" + subject +"_" + "Radar_plot_v1_mean"".png")
+#plt.savefig("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/figures/"+ dataset +"_" + subject +"_" + "Radar_plot_v1_mean"".png")
 plt.close()
 
 

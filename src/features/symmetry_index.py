@@ -91,16 +91,18 @@ def calculate_SI_new(win_df_left, win_df_right):
                 diff_avg.append(value)
             for t in zip(avg_list_left[left_col], avg_list_right[right_col]):
                 sum_avg.append(sum(t))
-            # print("diff_avg_", diff_avg)
-            # print(len(diff_avg))
-            # print("sum_avg_", sum_avg)
-            # print(len(sum_avg))
+            print("diff_avg_", diff_avg)
+            print(len(diff_avg))
+            print("sum_avg_", sum_avg)
+            print(len(sum_avg))
         
-    SI_List = [x / (0.5 * y) for x, y in zip(diff_avg, sum_avg)]
-
+    SI_List = [x / (0.5 * y) for x, y in zip(diff_avg, sum_avg)]  
+    print("SymmetrIndex_LIst", SI_List)
+    # SI_List = [i * 100 for i in SI_List] #*100 as a test to check if small values are removed (then we have avalue in %)
+    # print("SymmetrIndex_LIst *100", SI_List)
     return SI_List
 
-def construct_windows(df, window_sz=10, window_slide=2):
+def construct_windows(df, window_sz, window_slide):
     """
 
     Parameters
@@ -122,7 +124,7 @@ def construct_windows(df, window_sz=10, window_slide=2):
 
     return windowed_dfs
 
-def construct_windowed_df (df, window_sz, window_slide, side):
+def construct_windowed_df (df, window_sz, window_slide):
     ''' creates a windowed df from the gait parameters 
         and calculates the average and variation for each column 
         -> for Symmetry Index use '''
@@ -131,11 +133,12 @@ def construct_windowed_df (df, window_sz, window_slide, side):
     windows = construct_windows(df, window_sz=window_sz, window_slide=window_slide)
     dat.extend(windows)
     # aggregate parameters and save it to csv for other methods such as SVM
-    #if aggregate_windows:
+
     agg_dat = [aggregate_parameters_from_df(df) for df in dat]
-    all_windows_df = pd.concat(agg_dat)
+    all_windows_df = pd.concat(agg_dat)    
     all_windows_df.reset_index(drop=True, inplace=True)
-    all_windows_df.dropna(inplace=True)  # in case SI parameters are NaN
+    all_windows_df.dropna(inplace=True) 
+    # in case SI parameters are NaN
     #all_windows_df.drop(all_windows_df[all_windows_df.clearances_min_CV > 50000].index, inplace=True)
     
     return all_windows_df

@@ -9,10 +9,12 @@ from src.features.symmetry_index import construct_windowed_df, create_DF_SI, mer
 from src.features.symmetry_index import calculate_SI_new
 from src.features.symmetry_index import merge_df
 from src.features.symmetry_index import create_DF_SI
+from src.features.symmetry_index import aggregate_parameters_from_df
+from src.features.postprocessing import mark_turning_interval
 
 
 ### previously set parameters depending on folder structure
-dataset = "data_kiel"
+dataset = "data_charite"
 win_size = 10
 win_slide = 2
 
@@ -26,6 +28,7 @@ with open(os.path.join(os.path.dirname(__file__), '..', 'path.json')) as f:
 processed_base_path = os.path.join(paths[dataset], "processed")
 aggregated_data_path = os.path.join(paths[dataset], "aggregated_data/")
 final_data_path = os.path.join(paths[dataset], "final_data/")
+one_window_final_data_path = os.path.join(paths[dataset], "one_window_final_data/")
 
 # aggregated data ordner erstellen
 ordner = pathlib.Path(aggregated_data_path)
@@ -84,6 +87,36 @@ def concat_df_LR():
         params_df.to_csv(final_data_path + "all_" + s +"_"+ m + "_parameters.csv", index = False)
     return params_df
 
+def concat_full_df_LR():
+    ''' function gatheres the file paths to all aggregated dataframes from left and right foot seperately
+    then the df with averages and variation are used to calculate the Symmetry Index. The SI and the previous dataframes
+    are then merged to build the final dataframe of gait parameters for ML use
+    '''
+    files_left = sorted(glob.glob(aggregated_data_path +"one_window_left_foot_core_params_*" + "*.csv"))
+    print("files_left", files_left)
+    files_right = sorted(glob.glob(aggregated_data_path + "one_window_right_foot_core_params_*" + "*.csv"))
+    print("files_right", files_right)
+    for path_left, path_right in zip(files_left, files_right):
+        print("path_left", path_left)
+        print("path_right", path_right)
+        df_left = pd.read_csv(path_left)
+        print("df_left:", df_left.describe)
+        print("left columns__", df_left. columns)
+        df_right = pd.read_csv(path_right)
+        print("df_right:", df_right.describe)
+        print("right columns__", df_right. columns)
+        SI_df = calculate_SI_new(df_left, df_right)
+        print("list SI", len(SI_df))
+        SI_df = create_DF_SI(SI_df)
+        print("df_SI:", SI_df.describe)
+        #df_left = df_left.drop(columns = exclude_columns_left)
+        #df_right = df_right.drop(columns = exclude_columns_right)
+        params_df = merge_df(df_left, df_right, SI_df)
+        #df = pd.concat((pd.read_csv(f) for f in files), ignore_index=True)
+        s = df_left["subject"].iat[0] 
+        m = df_left["severity"].iat[0] 
+        params_df.to_csv(one_window_final_data_path + "One_window_all_" + s +"_"+ m + "_parameters.csv", index = False)
+    return params_df
 
 def add_column_LR(side, subjects, methods):
     '''Takes a list of file paths of LF or RF and adds subject + severity column for LF or RF
@@ -102,10 +135,24 @@ def add_column_LR(side, subjects, methods):
                 else:
                     #create SI and av df
                     df = pd.read_csv(files[0])
+
+                    #mark turning intervals 1 before and after turning steps
+                    df = mark_turning_interval(df,1)
+
                     #df  = df[df["is_outlier"] == False]   # outlier ?
-                    #print("dataframe before CW", df)
-                    #print("Colnames dataframe before CW", df.columns)
-                    win_df = construct_windowed_df(df, win_size, win_slide, side)
+                    print("dataframe before CW", df)
+                    print("Colnames dataframe before CW", df.columns)
+                    win_df = construct_windowed_df(df, win_size, win_slide)
+
+                    #whole df
+                    df_whole_win = df
+                    df_whole_win = aggregate_parameters_from_df(df_whole_win)
+                    df_whole_win = df_whole_win.add_suffix("_" + side)
+                    df_whole_win["severity"] = method
+                    df_whole_win["subject"] = subject
+                    #print("Colnames win_dataframe ", win_df.columns)
+                    df_whole_win.to_csv(aggregated_data_path + "one_window"+ "_" + side +"_foot_core_params_" + method +"_" + subject + ".csv", index = False)
+
                     win_df = win_df.add_suffix("_" + side)
                     win_df["severity"] = method
                     win_df["subject"] = subject
@@ -120,4 +167,5 @@ add_column_LR( "left", subjects, methods)
 ### window the df and add symmetry index column?
 
 final_df_ = concat_df_LR()
+final_df_full_df = concat_full_df_LR()
 
