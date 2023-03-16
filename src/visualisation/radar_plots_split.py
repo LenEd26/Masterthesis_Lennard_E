@@ -16,9 +16,9 @@ from visualize import exclude_outlier
 
 
 dataset = "data_charite"
-subject = "imu0001"
-feature_group = "CV_SI" #"avg" or "SI" or "CV" or "CV_SI"
-windowed = True
+subject = "imu0007"
+feature_group = "SI" #"avg" or "SI" or "CV" or "CV_SI"  -> only makes sense to check with SI not multiplied by 100
+windowed = False
 # Define filepath
 
 with open(os.path.join(os.getcwd(), 'path.json')) as f:
@@ -109,6 +109,18 @@ categories_CV_SI = ['stride_length_CV_left',
        'stride_length_SI', 'clearance_SI', 'stride_time_SI', 'swing_time_SI',
        'stance_time_SI', 'stance_ratio_SI', 'cadence_SI', 'speed_SI']
 
+#create labels for plot description
+label_SI = [
+       'stride_length', 'clearance', 'stride_time', 'swing_time',
+       'stance_time', 'stance_ratio', 'cadence', 'speed'] 
+
+label_CV = ['stride_length_left',
+       'clearance_left', 'stride_time_left', 'swing_time_left',
+       'stance_time_left', 'stance_ratio_left', 'cadence_left',
+       'speed_left','stride_length_right', 'clearance_right',
+       'stride_time_right', 'swing_time_right', 'stance_time_right',
+       'stance_ratio_right', 'cadence_right', 'speed_right']
+
 if feature_group == "avg":
     features_charite = features_charite_avg
     categories = categories_avg
@@ -190,7 +202,7 @@ visit_1_trans = visit_1_norm.transpose()
 if windowed == False:
     combined_trans = np.concatenate((visit_2_trans, visit_1_trans), axis=0)
 # ------- PART 1: Create background
- 
+
 # number of variable
 #categories=list(df)[1:]
 N = len(categories)
@@ -208,19 +220,27 @@ ax.set_theta_offset(pi / 2)
 ax.set_theta_direction(-1)
  
 # Draw one axe per variable + add labels
-plt.xticks(angles[:-1], categories)
-ax.set_xticklabels(categories, fontsize = 17)
+if feature_group == "SI":
+    plt.xticks(angles[:-1], label_SI)
+    ax.set_xticklabels(label_SI, fontsize = 17)   
+elif feature_group == "CV":
+    plt.xticks(angles[:-1], label_CV)
+    ax.set_xticklabels(label_CV, fontsize = 17)
+else:    
+    plt.xticks(angles[:-1], categories)
+    ax.set_xticklabels(categories, fontsize = 17)
+
 # Draw ylabels
 ax.set_rlabel_position(0)
 if windowed == True:
     max_val = visit_2_norm.max()
     print("max_val", max_val)
-    plt.yticks(np.arange(0, max_val.max(), step=0.5), color="grey", size=7)  
+    plt.yticks(np.arange(0, max_val.max(), step=0.01), color="grey", size=7)  
     plt.ylim(0,max_val.max()) 
 elif windowed == False:
     max_val = combined_trans.max()
     print("max_val", max_val)
-    plt.yticks(np.arange(0, max_val.max(), step=0.5), color="grey", size=7)   
+    plt.yticks(np.arange(0, max_val.max(), step=0.01), color="grey", size=7)   
     plt.ylim(0,max_val.max())
 
 # ------- PART 2: Add plots
@@ -252,7 +272,7 @@ plt.legend(loc='upper right', bbox_to_anchor=(0.1, 0.1))
 # Add title
 BLUE = "#2a475e"
 fig.suptitle(
-    "Radarplot of both visits for subject " + subject,
+    "Radarplot of the " + feature_group + " for both visits - subject " + subject,
     x = 0.1,
     y = 1,
     ha="left",

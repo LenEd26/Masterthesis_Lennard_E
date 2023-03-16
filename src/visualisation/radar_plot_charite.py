@@ -16,8 +16,8 @@ from visualize import exclude_outlier
 
 
 dataset = "data_charite"
-subject = "imu0001"
-windowed = True
+subject = "imu0006"
+windowed = False
 # Define filepath
 
 with open(os.path.join(os.getcwd(), 'path.json')) as f:
@@ -47,7 +47,7 @@ data_columns = list(data_full.columns.values)
 data_subject = data_full[data_full["subject"] == subject]
 
 
-features_charite = data_subject[['stride_length_avg_left', 'clearance_avg_left', 'stride_time_avg_left',
+features_charite_all = data_subject[['stride_length_avg_left', 'clearance_avg_left', 'stride_time_avg_left',
        'swing_time_avg_left', 'stance_time_avg_left', 'stance_ratio_avg_left',
        'cadence_avg_left', 'speed_avg_left', 'stride_length_CV_left',
        'clearance_CV_left', 'stride_time_CV_left', 'swing_time_CV_left',
@@ -61,11 +61,18 @@ features_charite = data_subject[['stride_length_avg_left', 'clearance_avg_left',
        'stride_length_SI', 'clearance_SI', 'stride_time_SI', 'swing_time_SI',
        'stance_time_SI', 'stance_ratio_SI', 'cadence_SI', 'speed_SI']]
 
+features_charite = data_subject[['stride_length_avg_left', 'clearance_avg_left', 'stride_time_avg_left',
+       'swing_time_avg_left', 'stance_time_avg_left', 'stance_ratio_avg_left',
+       'cadence_avg_left', 'speed_avg_left', 'severity', 'stride_length_avg_right',
+       'clearance_avg_right', 'stride_time_avg_right', 'swing_time_avg_right',
+       'stance_time_avg_right', 'stance_ratio_avg_right', 'cadence_avg_right',
+       'speed_avg_right']]
+
 print("features descr.", features_charite.describe())
 
 
 
-categories = ['stride_length_avg_left', 'clearance_avg_left', 'stride_time_avg_left',
+categories_all = ['stride_length_avg_left', 'clearance_avg_left', 'stride_time_avg_left',
        'swing_time_avg_left', 'stance_time_avg_left', 'stance_ratio_avg_left',
        'cadence_avg_left', 'speed_avg_left', 'stride_length_CV_left',
        'clearance_CV_left', 'stride_time_CV_left', 'swing_time_CV_left',
@@ -79,6 +86,12 @@ categories = ['stride_length_avg_left', 'clearance_avg_left', 'stride_time_avg_l
        'stride_length_SI', 'clearance_SI', 'stride_time_SI', 'swing_time_SI',
        'stance_time_SI', 'stance_ratio_SI', 'cadence_SI', 'speed_SI']
 
+categories = ['stride_length_avg_left', 'clearance_avg_left', 'stride_time_avg_left',
+       'swing_time_avg_left', 'stance_time_avg_left', 'stance_ratio_avg_left',
+       'cadence_avg_left', 'speed_avg_left', 'stride_length_avg_right',
+       'clearance_avg_right', 'stride_time_avg_right', 'swing_time_avg_right',
+       'stance_time_avg_right', 'stance_ratio_avg_right', 'cadence_avg_right',
+       'speed_avg_right']
 
 visit_1 = features_charite[features_charite["severity"] == "visit1"]
 visit_1 = visit_1.reset_index()
@@ -200,7 +213,7 @@ plt.legend(loc='upper right', bbox_to_anchor=(0.1, 0.1))
 # Add title
 BLUE = "#2a475e"
 fig.suptitle(
-    "Radarplot of both visits for subject " + subject,
+    "Radarplot of average features for both visits normalized on visit 1 - subject " + subject,
     x = 0.1,
     y = 1,
     ha="left",
@@ -209,9 +222,14 @@ fig.suptitle(
     color=BLUE,
     weight="bold",    
 )
+
+if windowed ==True:
+    wd = "_windowed"
+else:
+    wd = ""
 # Show the graph
 plt.show()
-#plt.savefig("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/figures/"+ dataset +"_" + subject +"_" + "Radar_plot_v1_mean"".png")
+#plt.savefig("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/figures/"+ dataset +"_" + subject +"_" + "radar_plot_avg"+ wd +".png")
 plt.close()
 
 

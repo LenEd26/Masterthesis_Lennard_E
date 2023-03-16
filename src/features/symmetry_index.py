@@ -98,7 +98,7 @@ def calculate_SI_new(win_df_left, win_df_right):
         
     SI_List = [x / (0.5 * y) for x, y in zip(diff_avg, sum_avg)]  
     print("SymmetrIndex_LIst", SI_List)
-    # SI_List = [i * 100 for i in SI_List] #*100 as a test to check if small values are removed (then we have avalue in %)
+    #SI_List = [i * 100 for i in SI_List] #*100 as a test to check if small values are removed (then we have avalue in %)
     # print("SymmetrIndex_LIst *100", SI_List)
     return SI_List
 
