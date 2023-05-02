@@ -30,8 +30,8 @@ def execute(sub_list, runs, dataset, data_base_path):
                             'trajectory_estimator': TuncaTrajectoryEstimator,
                             'sampling_rate': 120, 
                             'gait_event_detector': TuncaEventDetector,
-                            'prominence_search_threshold': 0.7, #0.7
-                            'prominence_ic': 0.7,
+                            'prominence_search_threshold': 0.7,
+                            'prominence_ic': 0.3,
                             'prominence_fo': 0.7, #1
                             "reference_loader": OptogaitReferenceLoader,
                             "reference_name": "OptoGait", 

@@ -16,8 +16,8 @@ from visualize import exclude_outlier
 
 
 dataset = "data_charite"
-subject = "imu0007"
-feature_group = "SI" #"avg" or "SI" or "CV" or "CV_SI"  -> only makes sense to check with SI not multiplied by 100
+subject = "imu0011"
+feature_group = "CV" #"avg" or "SI" or "CV" or "CV_SI"  -> only makes sense to check with SI not multiplied by 100
 windowed = False
 # Define filepath
 
@@ -199,6 +199,7 @@ print("visit2! transposed", visit_2.transpose())
 visit_2_trans = visit_2_norm.transpose()
 visit_1_trans = visit_1_norm.transpose()
 
+
 if windowed == False:
     combined_trans = np.concatenate((visit_2_trans, visit_1_trans), axis=0)
 # ------- PART 1: Create background
@@ -222,10 +223,12 @@ ax.set_theta_direction(-1)
 # Draw one axe per variable + add labels
 if feature_group == "SI":
     plt.xticks(angles[:-1], label_SI)
-    ax.set_xticklabels(label_SI, fontsize = 17)   
+    ax.set_xticklabels(label_SI, fontsize = 17)  
+    visit_zero = [0,0,0,0,0,0,0,0] 
 elif feature_group == "CV":
     plt.xticks(angles[:-1], label_CV)
     ax.set_xticklabels(label_CV, fontsize = 17)
+    #visit_zero = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] 
 else:    
     plt.xticks(angles[:-1], categories)
     ax.set_xticklabels(categories, fontsize = 17)
@@ -234,14 +237,20 @@ else:
 ax.set_rlabel_position(0)
 if windowed == True:
     max_val = visit_2_norm.max()
+    min_val = visit_2_norm.min()
     print("max_val", max_val)
-    plt.yticks(np.arange(0, max_val.max(), step=0.01), color="grey", size=7)  
-    plt.ylim(0,max_val.max()) 
+    step = 0.01
+    y_ticks = [round(num, 2) for num in np.arange(min_val, max_val, step=step)]
+    plt.yticks(y_ticks, color="grey", size=7)
+    plt.ylim(min_val.min(),max_val.max()) 
 elif windowed == False:
     max_val = combined_trans.max()
+    min_val = combined_trans.min()
     print("max_val", max_val)
-    plt.yticks(np.arange(0, max_val.max(), step=0.01), color="grey", size=7)   
-    plt.ylim(0,max_val.max())
+    step = 0.01
+    y_ticks = [round(num, 2) for num in np.arange(min_val, max_val, step=step)]
+    plt.yticks(y_ticks, color="grey", size=7)   
+    plt.ylim(min_val.min(),max_val.max())
 
 # ------- PART 2: Add plots
  
@@ -266,6 +275,12 @@ values2 += values2[:1]
 ax.plot(angles, values2, linewidth=1, linestyle='solid', label="Visit 2")
 ax.fill(angles, values2, 'r', alpha=0.1)
  
+#Ind Zero
+if feature_group == "SI":
+    values_zero = visit_zero
+    values_zero += values_zero[:1]
+    ax.plot(angles, values_zero, linewidth=1, linestyle='dashed', label="Zero Reference")
+    ax.fill(angles, values_zero, 'g', alpha=0)
 # Add legend
 plt.legend(loc='upper right', bbox_to_anchor=(0.1, 0.1))
 

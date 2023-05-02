@@ -87,7 +87,7 @@ def calculate_SI_new(win_df_left, win_df_right):
     # for name in SI_List:
     for left_col, right_col in zip(avg_list_left, avg_list_right):
             for left_tuple, right_tuple in zip(avg_list_left[left_col], avg_list_right[right_col]):
-                value = abs(left_tuple - right_tuple)
+                value = (left_tuple - right_tuple)  #remove abs() values for better SI Interpretation
                 diff_avg.append(value)
             for t in zip(avg_list_left[left_col], avg_list_right[right_col]):
                 sum_avg.append(sum(t))

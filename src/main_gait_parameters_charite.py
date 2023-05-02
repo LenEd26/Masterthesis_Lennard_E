@@ -12,10 +12,11 @@ if dataset == "data_charite":
         #"imu0001",
         #"imu0002",
         #"imu0003",
-        "imu0006"
+        #"imu0006"
         #"imu0007",
         #"imu0008",
-        #"imu0009"
+        #"imu0009",
+        "imu0011"
     ]
 
     runs = [

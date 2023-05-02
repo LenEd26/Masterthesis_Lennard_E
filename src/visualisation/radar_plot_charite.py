@@ -16,7 +16,7 @@ from visualize import exclude_outlier
 
 
 dataset = "data_charite"
-subject = "imu0006"
+subject = "imu0011"
 windowed = False
 # Define filepath
 
@@ -37,6 +37,8 @@ for path in csv_file:
     df_list.append(df_s)
 data_full = pd.concat(df_list, axis = 0, ignore_index= True)    
 print("appending data:", data_full.describe())
+#data_descr = data_full[data_full["severity"]=="visit2"].describe()
+#data_descr.to_csv(final_datapath + "_v2_summary.csv", sep=',')
 print(data_full.columns)
 print(data_full.isnull().values.any())
 data_full = data_full.dropna()
