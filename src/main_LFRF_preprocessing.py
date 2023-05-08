@@ -13,7 +13,7 @@ from data_reader.DataLoader import DataLoader
 dataset = "data_charite"
 load_raw = True  # load (and plot) raw IMU data into interim data
 get_stance_threshold = True  # determine stance threshold
-get_initial_contact = False # determine IMU initial contact
+get_initial_contact = True # determine IMU initial contact
 
 if dataset == "data_charite":
     sub_list = [
@@ -24,7 +24,10 @@ if dataset == "data_charite":
         #"imu0007",
         #"imu0008",
         #"imu0009",
-        "imu0011"
+        #"imu0011",
+        #"imu0012",
+        "imu0013",
+
         ]
 
     runs = [

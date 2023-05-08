@@ -47,7 +47,6 @@ subjects_3 = [
         "pp139",
         "pp158",
         "pp165"
-
 ]
 #all_sub = list(zip(subjects_1, subjects_2, subjects_3))
 
@@ -68,6 +67,12 @@ for path in csv_file:
     df_list.append(df_s)
 data_full = pd.concat(df_list, axis = 0, ignore_index= True)    
 print("appending data:", data_full.describe())
+data_descr = data_full.describe()
+data_mean = data_full.mean(axis=0)
+data_mean = pd.DataFrame(data=data_mean)
+data_mean = data_mean.transpose()
+data_descr.to_csv(final_datapath + "_summary.csv", sep=',', header=True)
+data_mean.to_csv(final_datapath + "_mean.csv", sep=',', header=True, index=False)
 print(data_full.columns)
 print(data_full.isnull().values.any())
 data_full = data_full.dropna()

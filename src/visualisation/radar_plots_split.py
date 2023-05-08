@@ -16,7 +16,7 @@ from visualize import exclude_outlier
 
 
 dataset = "data_charite"
-subject = "imu0011"
+subject = "imu0013"
 feature_group = "CV" #"avg" or "SI" or "CV" or "CV_SI"  -> only makes sense to check with SI not multiplied by 100
 windowed = False
 # Define filepath
@@ -45,8 +45,12 @@ print(data_full.columns)
 print(data_full.isnull().values.any())
 data_full = data_full.dropna()
 
-data_columns = list(data_full.columns.values)
+#load reference data
+reference_df = pd.read_csv("/dhc/home/lennard.ekrod/Masterthesis_Lennard_E/data_kiel/final_data_mean.csv")
+#reference_df = pd.DataFrame(data = reference_df)
+#reference_df= reference_df.transpose()
 
+data_columns = list(data_full.columns.values)
 
 data_subject = data_full[data_full["subject"] == subject]
 
@@ -62,6 +66,13 @@ features_charite_CV = data_subject[['stride_length_CV_left',
        'clearance_CV_left', 'stride_time_CV_left', 'swing_time_CV_left',
        'stance_time_CV_left', 'stance_ratio_CV_left', 'cadence_CV_left',
        'speed_CV_left', 'severity', 'stride_length_CV_right', 'clearance_CV_right',
+       'stride_time_CV_right', 'swing_time_CV_right', 'stance_time_CV_right',
+       'stance_ratio_CV_right', 'cadence_CV_right', 'speed_CV_right']]
+
+reference_df_CV = reference_df[['stride_length_CV_left',
+       'clearance_CV_left', 'stride_time_CV_left', 'swing_time_CV_left',
+       'stance_time_CV_left', 'stance_ratio_CV_left', 'cadence_CV_left',
+       'speed_CV_left', 'stride_length_CV_right', 'clearance_CV_right',
        'stride_time_CV_right', 'swing_time_CV_right', 'stance_time_CV_right',
        'stance_ratio_CV_right', 'cadence_CV_right', 'speed_CV_right']]
 
@@ -89,16 +100,16 @@ categories_avg = ['stride_length_avg_left', 'clearance_avg_left', 'stride_time_a
        'stance_time_avg_right', 'stance_ratio_avg_right', 'cadence_avg_right',
        'speed_avg_right']
 
-categories_CV = ['stride_length_CV_left',
-       'clearance_CV_left', 'stride_time_CV_left', 'swing_time_CV_left',
-       'stance_time_CV_left', 'stance_ratio_CV_left', 'cadence_CV_left',
-       'speed_CV_left','stride_length_CV_right', 'clearance_CV_right',
-       'stride_time_CV_right', 'swing_time_CV_right', 'stance_time_CV_right',
-       'stance_ratio_CV_right', 'cadence_CV_right', 'speed_CV_right']
+categories_CV = ['stride length left',
+       'clearance left', 'stride time left', 'swing time left',
+       'stance time left', 'stance ratio left', 'cadence left',
+       'speed left','stride length right', 'clearance right',
+       'stride time right', 'swing time right', 'stance time right',
+       'stance ratio right', 'cadence right', 'speed right']
 
 categories_SI = [
-       'stride_length_SI', 'clearance_SI', 'stride_time_SI', 'swing_time_SI',
-       'stance_time_SI', 'stance_ratio_SI', 'cadence_SI', 'speed_SI']
+       'stride length', 'clearance', 'stride time', 'swing time',
+       'stance time', 'stance ratio', 'cadence', 'speed']
 
 categories_CV_SI = ['stride_length_CV_left',
        'clearance_CV_left', 'stride_time_CV_left', 'swing_time_CV_left',
@@ -111,15 +122,15 @@ categories_CV_SI = ['stride_length_CV_left',
 
 #create labels for plot description
 label_SI = [
-       'stride_length', 'clearance', 'stride_time', 'swing_time',
-       'stance_time', 'stance_ratio', 'cadence', 'speed'] 
+       'stride length', 'clearance', 'stride time', 'swing time',
+       'stance time', 'stance ratio', 'cadence', 'speed'] 
 
-label_CV = ['stride_length_left',
-       'clearance_left', 'stride_time_left', 'swing_time_left',
-       'stance_time_left', 'stance_ratio_left', 'cadence_left',
-       'speed_left','stride_length_right', 'clearance_right',
-       'stride_time_right', 'swing_time_right', 'stance_time_right',
-       'stance_ratio_right', 'cadence_right', 'speed_right']
+label_CV = ['stride length left',
+       'clearance left', 'stride time left', 'swing time left',
+       'stance time left', 'stance ratio left', 'cadence left',
+       'speed left','stride length right', 'clearance_right',
+       'stride time right', 'swing time right', 'stance time right',
+       'stance ratio right', 'cadence right', 'speed right']
 
 if feature_group == "avg":
     features_charite = features_charite_avg
@@ -149,6 +160,7 @@ visit_2.drop("severity",inplace = True, axis = 1)
 visit_2.drop("index", inplace = True, axis = 1)
 print("visit_2", visit_2.describe())
 
+
 #for check of radarplots
 diff_in_values = visit_1 - visit_2
 print("diff in values", diff_in_values.transpose())
@@ -172,8 +184,8 @@ else:
     visit_2_norm = visit_2
 
 ### remove outliers
-exclude_outlier(visit_2_norm, categories)
-exclude_outlier(visit_1_norm, categories)
+#exclude_outlier(visit_2_norm, categories)
+#exclude_outlier(visit_1_norm, categories)
 
 
 v_2_norm_mean = visit_2_norm.mean()
@@ -198,10 +210,10 @@ print("visit2! transposed", visit_2.transpose())
 
 visit_2_trans = visit_2_norm.transpose()
 visit_1_trans = visit_1_norm.transpose()
-
+reference_trans = reference_df_CV.transpose()
 
 if windowed == False:
-    combined_trans = np.concatenate((visit_2_trans, visit_1_trans), axis=0)
+    combined_trans = np.concatenate((visit_2_trans, visit_1_trans, reference_trans), axis=0)
 # ------- PART 1: Create background
 
 # number of variable
@@ -213,7 +225,7 @@ angles = [n / float(N) * 2 * pi for n in range(N)]
 angles += angles[:1]
  
 # Initialise the spider plot
-fig = plt.figure(figsize=(15, 15))
+fig = plt.figure(figsize=(7, 7))
 ax = plt.subplot(111, polar=True)
  
 # If you want the first axis to be on top:
@@ -223,15 +235,14 @@ ax.set_theta_direction(-1)
 # Draw one axe per variable + add labels
 if feature_group == "SI":
     plt.xticks(angles[:-1], label_SI)
-    ax.set_xticklabels(label_SI, fontsize = 17)  
+    ax.set_xticklabels(label_SI, fontsize = 8)  
     visit_zero = [0,0,0,0,0,0,0,0] 
 elif feature_group == "CV":
     plt.xticks(angles[:-1], label_CV)
-    ax.set_xticklabels(label_CV, fontsize = 17)
-    #visit_zero = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] 
+    ax.set_xticklabels(label_CV, fontsize = 8)
 else:    
     plt.xticks(angles[:-1], categories)
-    ax.set_xticklabels(categories, fontsize = 17)
+    ax.set_xticklabels(categories, fontsize = 8)
 
 # Draw ylabels
 ax.set_rlabel_position(0)
@@ -247,7 +258,7 @@ elif windowed == False:
     max_val = combined_trans.max()
     min_val = combined_trans.min()
     print("max_val", max_val)
-    step = 0.01
+    step = 0.02
     y_ticks = [round(num, 2) for num in np.arange(min_val, max_val, step=step)]
     plt.yticks(y_ticks, color="grey", size=7)   
     plt.ylim(min_val.min(),max_val.max())
@@ -274,7 +285,14 @@ print("VALUES2", values2)
 values2 += values2[:1]
 ax.plot(angles, values2, linewidth=1, linestyle='solid', label="Visit 2")
 ax.fill(angles, values2, 'r', alpha=0.1)
- 
+
+#CV reference data
+if feature_group == "CV":
+    reference_data = reference_df_CV.values.flatten().tolist()
+    reference_data += reference_data[:1]
+    ax.plot(angles, reference_data, linewidth=1, linestyle='dashed', label="Reference")
+    ax.fill(angles, reference_data , 'g', alpha=0)
+
 #Ind Zero
 if feature_group == "SI":
     values_zero = visit_zero
@@ -282,16 +300,16 @@ if feature_group == "SI":
     ax.plot(angles, values_zero, linewidth=1, linestyle='dashed', label="Zero Reference")
     ax.fill(angles, values_zero, 'g', alpha=0)
 # Add legend
-plt.legend(loc='upper right', bbox_to_anchor=(0.1, 0.1))
+plt.legend(loc='upper right', bbox_to_anchor=(0.2, 0.1))
 
 # Add title
 BLUE = "#2a475e"
 fig.suptitle(
     "Radarplot of the " + feature_group + " for both visits - subject " + subject,
-    x = 0.1,
-    y = 1,
+    x = 0.23,
+    y = 0.95,
     ha="left",
-    fontsize=24,
+    fontsize=10,
     fontname="DejaVu Sans",
     color=BLUE,
     weight="bold",    
